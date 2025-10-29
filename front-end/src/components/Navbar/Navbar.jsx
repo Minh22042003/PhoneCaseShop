@@ -1,15 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Menu, X, Search, ShoppingCart, User } from 'lucide-react';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
   const navItems = [
     { name: 'Trang Chủ', href: '/' },
     { name: 'Sản Phẩm', href: '/product' },
-    { name: 'Thiết Kế', href: '#custom' },
+    { name: 'Thiết Kế', href: '/custom' },
     { name: 'Tin Tức', href: '/blog' },
     { name: 'Liên Hệ', href: '/contact' },
   ];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav className="bg-white shadow-xl sticky top-0 z-50 transition-all duration-300">
@@ -59,12 +73,32 @@ const Navbar = () => {
             </a>
 
             {/* Tài Khoản */}
-            <button
-              aria-label="Tài khoản"
-              className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all duration-200 hidden sm:block"
-            >
-              <User className="h-5 w-5" />
-            </button>
+            <div className="relative hidden sm:block" ref={userMenuRef}>
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                aria-label="Tài khoản"
+                className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all duration-200"
+              >
+                <User className="h-5 w-5" />
+              </button>
+
+              {isUserMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-50 py-1 ring-1 ring-black ring-opacity-5">
+                  <a
+                    href="/login"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Đăng Nhập
+                  </a>
+                  <a
+                    href="/register"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Đăng Ký
+                  </a>
+                </div>
+              )}
+            </div>
             
             {/* Nút Hamburger (Mobile) */}
             <button
