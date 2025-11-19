@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Minus, Trash2, ShoppingCart } from 'lucide-react';
 import { sampleProducts } from '../../data/products';
 import { formatCurrency } from '../../util/format';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 // Mock data for cart items by adding quantity to sample products
 const initialCartItems = [
@@ -12,6 +13,15 @@ const initialCartItems = [
 ];
 
 const Cart = () => {
+    const { auth } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // If not authenticated, redirect to login
+        if (!auth || !auth.user) {
+            navigate('/login', { replace: true });
+        }
+    }, [auth, navigate]);
     const [cartItems, setCartItems] = useState(initialCartItems);
 
     const handleQuantityChange = (productId, newQuantity) => {

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Menu, X, Search, ShoppingCart, User } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
+  const { auth, setAuth } = useAuth();
   const navItems = [
     { name: 'Trang Chủ', href: '/' },
     { name: 'Sản Phẩm', href: '/product' },
@@ -72,30 +74,58 @@ const Navbar = () => {
               <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">3</span>
             </a>
 
-            {/* Tài Khoản */}
+            {/* Tài Khoản / User */}
             <div className="relative hidden sm:block" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 aria-label="Tài khoản"
-                className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all duration-200"
+                className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all duration-200 flex items-center"
               >
-                <User className="h-5 w-5" />
+                <User className="h-5 w-5 mr-1" />
+                {auth?.user ? (
+                  <span className="font-semibold text-sm">Hi, {auth.user.name}</span>
+                ) : (
+                  <span className="text-sm">Tài khoản</span>
+                )}
               </button>
 
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-50 py-1 ring-1 ring-black ring-opacity-5">
-                  <a
-                    href="/login"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Đăng Nhập
-                  </a>
-                  <a
-                    href="/register"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Đăng Ký
-                  </a>
+                <div className="absolute right-0 mt-2 w-52 bg-white rounded-md shadow-xl z-50 py-1 ring-1 ring-black ring-opacity-5">
+                  {auth?.user ? (
+                    <>
+                      <a
+                        href="#"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Thông tin người dùng
+                      </a>
+                      <button
+                        onClick={() => {
+                          setAuth({ user: null, token: null });
+                          localStorage.removeItem('auth');
+                          setIsUserMenuOpen(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Đăng xuất
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <a
+                        href="/login"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Đăng Nhập
+                      </a>
+                      <a
+                        href="/register"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Đăng Ký
+                      </a>
+                    </>
+                  )}
                 </div>
               )}
             </div>

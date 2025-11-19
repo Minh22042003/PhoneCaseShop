@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Hàm gọi API thực (sẽ bị MSW chặn trong môi trường dev)
-export const fetchUser = async (userId) => {
-  const response = await axios.get(`/api/users/${userId}`);
-  return response.data; // Trả về dữ liệu thô
+// Đăng nhập: trả về { user, token } hoặc throw lỗi
+export const login = async ({ email, password }) => {
+  const response = await axios.post('/api/login', { email, password });
+  return response.data;
 };

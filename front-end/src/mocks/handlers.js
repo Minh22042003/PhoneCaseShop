@@ -24,4 +24,23 @@ export const handlers = [
   http.get('/api/products/all', () => {
     return HttpResponse.json(MOCK_PRODUCTS_LIST, { status: 200 });
   }),
+
+  // 3. Mock POST request for login
+  http.post('/api/login', async ({ request }) => {
+    const { email, password } = await request.json();
+    // Simple mock: accept any email ending with @example.com and password '123456'
+    if (typeof email === 'string' && email.endsWith('@example.com') && password === '123456') {
+      // Return a fake user object and token
+      return HttpResponse.json({
+        user: {
+          id: 1,
+          name: 'Test User',
+          email,
+        },
+        token: 'mock-jwt-token',
+      }, { status: 200 });
+    }
+    // Otherwise, return error
+    return HttpResponse.json({ message: 'Email hoặc mật khẩu không đúng.' }, { status: 401 });
+  }),
 ];

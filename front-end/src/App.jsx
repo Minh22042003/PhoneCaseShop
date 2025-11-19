@@ -9,24 +9,32 @@ import Contact from './pages/Contact/Contact'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
 import DesighPhoneCase from './pages/DesighPhoneCase/DesighPhoneCase'
+import { CartModalProvider } from './context/CartModalContext'
+import CartAddModal from './components/CartAddModal/CartAddModal'
+import { AuthProvider } from './context/AuthContext';
 
 const App = () => {
   return (
-    <div className='app'>
-      <Navbar></Navbar>
-      <Routes>
-        <Route path='/' element={<Home></Home>}></Route>
-        <Route path='/product' element={<ProductSearch></ProductSearch>}></Route>
-        <Route path='/cart' element={<Cart></Cart>}></Route>
-        <Route path='/blog' element={<Blog></Blog>}></Route>
-        <Route path='/contact' element={<Contact></Contact>}></Route>
-        <Route path='/cart' element={<Cart></Cart>}></Route>
-        <Route path='/custom' element={<DesighPhoneCase></DesighPhoneCase>}></Route>
-        <Route path='/login' element={<Login></Login>}></Route>
-        <Route path='/register' element={<Register></Register>}></Route>
-      </Routes>
-      <Footer></Footer>
-    </div>
+    <AuthProvider>
+      <div className='app'>
+        <CartModalProvider>
+          <CartAddModal onConfirmAdd={() => { /* implement add-to-cart behavior here */ }} />
+          <Navbar></Navbar>
+          <Routes>
+            <Route path='/' element={<Home></Home>}></Route>
+            <Route path='/product' element={<ProductSearch></ProductSearch>}></Route>
+            <Route path='/cart' element={<Cart></Cart>}></Route>
+            <Route path='/blog' element={<Blog></Blog>}></Route>
+            <Route path='/contact' element={<Contact></Contact>}></Route>
+            <Route path='/cart' element={<Cart></Cart>}></Route>
+            <Route path='/custom' element={<DesighPhoneCase></DesighPhoneCase>}></Route>
+            <Route path='/login' element={<Login></Login>}></Route>
+            <Route path='/register' element={<Register></Register>}></Route>
+          </Routes>
+          <Footer></Footer>
+        </CartModalProvider>
+      </div>
+    </AuthProvider>
   )
 }
 
