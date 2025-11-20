@@ -44,6 +44,17 @@ export const MOCK_PRODUCTS_LIST = [
     { id: 'inv6', phone_model_id: 'pm3', case_type_id: 'ct6', case_type_name: 'Ốp lưng cứng Pixel 7 Pro', case_type_price: 267000, case_type_description: 'Ốp lưng làm từ chất liệu TPU dẻo dai, chống sốc tốt.', case_type_image_url: 'https://placehold.co/400x400/8B5CF6/ffffff?text=Glass+Case', phone_model_name: 'Pixel 7 Pro', quantity: 140},
 ];
 
+export const MOCK_ORDER_ITEMS = [
+
+]
+
+export const MOCK_USER_BY_ID = {
+  id: '1',
+  name: 'Bảo',
+  email: 'bao@example.com',
+  phone: '0123456789',
+} 
+
 
 
 

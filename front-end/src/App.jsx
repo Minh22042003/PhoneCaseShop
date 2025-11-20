@@ -9,6 +9,9 @@ import Contact from './pages/Contact/Contact'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
 import DesighPhoneCase from './pages/DesighPhoneCase/DesighPhoneCase'
+import UserDetails from './pages/UserDetails/UserDetails'
+import EditUser from './pages/EditUser/EditUser'
+
 import { CartModalProvider } from './context/CartModalContext'
 import CartAddModal from './components/CartAddModal/CartAddModal'
 import { AuthProvider } from './context/AuthContext';
@@ -30,6 +33,8 @@ const App = () => {
             <Route path='/custom' element={<DesighPhoneCase></DesighPhoneCase>}></Route>
             <Route path='/login' element={<Login></Login>}></Route>
             <Route path='/register' element={<Register></Register>}></Route>
+            <Route path='/user/:id' element={<UserDetails></UserDetails>}></Route>
+            <Route path='/user/edit/:id' element={<EditUser></EditUser>}></Route>
           </Routes>
           <Footer></Footer>
         </CartModalProvider>

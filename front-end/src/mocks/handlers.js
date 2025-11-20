@@ -1,11 +1,27 @@
 import { http, HttpResponse } from 'msw';
-import { MOCK_USERS_DATA, MOCK_POST_DETAIL, MOCK_PRODUCTS_LIST } from './mockData'; // <-- IMPORT DỮ LIỆU
+import { MOCK_USERS_DATA, MOCK_POST_DETAIL, MOCK_PRODUCTS_LIST, MOCK_USER_BY_ID } from './mockData'; // <-- IMPORT DỮ LIỆU
 
 export const handlers = [
   // 1. Mock GET request trả về danh sách người dùng
   http.get('/api/users', () => {
     // Trả về toàn bộ array MOCK_USERS_DATA
     return HttpResponse.json(MOCK_USERS_DATA, { status: 200 });
+  }),
+
+  http.get('/api/users/:userId', ({ params }) => {
+    const { userId } = params;
+    if (userId === '1') {
+      return HttpResponse.json(MOCK_USER_BY_ID, { status: 200 });
+    }
+    return HttpResponse.json({ message: 'User not found' }, { status: 404 });
+  }),
+
+  http.put('/api/users/:userId', ({ params }) => {
+    const { userId } = params;
+    if (userId === '1') {
+      return HttpResponse.json(MOCK_USER_BY_ID, { status: 200 });
+    }
+    return HttpResponse.json({ message: 'User not found' }, { status: 404 });
   }),
 
   // 2. Mock GET request trả về chi tiết một bài post

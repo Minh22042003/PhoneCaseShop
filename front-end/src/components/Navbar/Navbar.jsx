@@ -94,7 +94,7 @@ const Navbar = () => {
                   {auth?.user ? (
                     <>
                       <a
-                        href="#"
+                        href={`/user/${auth.user.id}`}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         Thông tin người dùng

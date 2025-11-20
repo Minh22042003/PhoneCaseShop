@@ -1,7 +1,19 @@
 import axios from 'axios';
 
+
+
 // Đăng nhập: trả về { user, token } hoặc throw lỗi
 export const login = async ({ email, password }) => {
   const response = await axios.post('/api/login', { email, password });
+  return response.data;
+};
+
+export const getUserById = async (userId) => {
+  const response = await axios.get(`/api/users/${userId}`);
+  return response.data;
+};
+
+export const updateUser = async (userId, userData) => {
+  const response = await axios.put(`/api/users/${userId}`, userData);
   return response.data;
 };
