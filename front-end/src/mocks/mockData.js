@@ -21,14 +21,11 @@ export const MOCK_PHONE_MODELS = [
 
 export const MOCK_CASE_TYPES = [
   { id: 'ct1', name: 'Ốp lưng dẻo iPhone 14 Pro', description: 'Ốp lưng làm từ chất liệu TPU dẻo dai, chống sốc tốt.', image_url: '', creatAt: '' , price: 299000},
-  { id: 'ct2', name: 'Ốp lưng cứng', description: 'Ốp lưng làm từ nhựa cứng PC, bảo vệ máy tối ưu.', image_url: '', creatAt: '' },
-  { id: 'ct3', name: 'Ốp lưng ví', description: 'Ốp lưng kiêm ví đựng thẻ, tiện lợi khi di chuyển.', image_url: '', creatAt: '' },
-];
-
-export const MOCK_INVENTORY_ITEMS = [
-    { id: 'inv1', quantity: 200, phone_model_id: 'pm1', case_type_id: 'ct1',creatAt: '', updateAt: '' },
-    { id: 'inv2', quantity: 200, phone_model_id: 'pm2', case_type_id: 'ct2',creatAt: '', updateAt: '' },
-    { id: 'inv3', quantity: 200, phone_model_id: 'pm3', case_type_id: 'ct3',creatAt: '', updateAt: '' },
+  { id: 'ct2', name: 'Ốp lưng cứng', description: 'Ốp lưng làm từ nhựa cứng PC, bảo vệ máy tối ưu.', image_url: '', creatAt: '', price: 109000},
+  { id: 'ct3', name: 'Ốp lưng ví', description: 'Ốp lưng kiêm ví đựng thẻ, tiện lợi khi di chuyển.', image_url: '', creatAt: '', price: 99000},
+  { id: 'ct4', name: 'Ốp lưng cứng Galaxy S23 Ultra', description: 'Ốp lưng làm từ nhựa cứng PC, bảo vệ máy tối ưu.', image_url: '', creatAt: '', price: 399000},
+  { id: 'ct5', name: 'Ốp lưng dẻo Pixel 7 Pro', description: 'Ốp lưng làm từ chất liệu TPU dẻo dai, chống sốc tốt.', image_url: '', creatAt: '', price: 293000},
+  { id: 'ct6', name: 'Ốp lưng cứng Pixel 7 Pro', description: 'Ốp lưng làm từ nhựa cứng PC, bảo vệ máy tối ưu.', image_url: '', creatAt: '', price: 267000},
 ];
 
 export const MOCK_PRODUCT_1 = { 
@@ -44,16 +41,32 @@ export const MOCK_PRODUCTS_LIST = [
     { id: 'inv6', phone_model_id: 'pm3', case_type_id: 'ct6', case_type_name: 'Ốp lưng cứng Pixel 7 Pro', case_type_price: 267000, case_type_description: 'Ốp lưng làm từ chất liệu TPU dẻo dai, chống sốc tốt.', case_type_image_url: 'https://placehold.co/400x400/8B5CF6/ffffff?text=Glass+Case', phone_model_name: 'Pixel 7 Pro', quantity: 140},
 ];
 
-export const MOCK_ORDER_ITEMS = [
-
-]
+//Đây là kho hàng
+export const MOCK_INVENTORY_ITEMS = [
+    { id: 'inv1', quantity: 200, phone_model_id: 'pm1', case_type_id: 'ct1',creatAt: '', updateAt: '' },
+    { id: 'inv2', quantity: 200, phone_model_id: 'pm2', case_type_id: 'ct2',creatAt: '', updateAt: '' },
+    { id: 'inv3', quantity: 200, phone_model_id: 'pm3', case_type_id: 'ct3',creatAt: '', updateAt: '' },
+    { id: 'inv4', quantity: 200, phone_model_id: 'pm1', case_type_id: 'ct2',creatAt: '', updateAt: '' },
+    { id: 'inv5', quantity: 200, phone_model_id: 'pm2', case_type_id: 'ct3',creatAt: '', updateAt: '' },
+    { id: 'inv6', quantity: 200, phone_model_id: 'pm3', case_type_id: 'ct1',creatAt: '', updateAt: '' },
+];
 
 export const MOCK_USER_BY_ID = {
   id: '1',
   name: 'Bảo',
   email: 'bao@example.com',
   phone: '0123456789',
-} 
+}
+
+export const MOCK_CARTS = {id: '1', user_id: '1'}
+
+
+export const MOCK_CART_ITEMS = [
+  {id: '1', cart_id: '1', inventory_item_id: 'inv1', design_id: '', quantity: 4, unit_price: 299000*4},
+  {id: '2', cart_id: '1', inventory_item_id: 'inv2', design_id: '', quantity: 2, unit_price: 109000*4}
+]
+
+
 
 
 

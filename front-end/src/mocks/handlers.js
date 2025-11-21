@@ -1,5 +1,15 @@
 import { http, HttpResponse } from 'msw';
-import { MOCK_USERS_DATA, MOCK_POST_DETAIL, MOCK_PRODUCTS_LIST, MOCK_USER_BY_ID } from './mockData'; // <-- IMPORT DỮ LIỆU
+import {
+  MOCK_USERS_DATA,
+  MOCK_POST_DETAIL,
+  MOCK_PRODUCTS_LIST,
+  MOCK_USER_BY_ID,
+  MOCK_CART_ITEMS,
+  MOCK_INVENTORY_ITEMS,
+  MOCK_CASE_TYPES,
+  MOCK_PHONE_MODELS,
+  MOCK_CARTS
+} from './mockData'; // <-- IMPORT DỮ LIỆU
 
 export const handlers = [
   // 1. Mock GET request trả về danh sách người dùng
@@ -39,6 +49,40 @@ export const handlers = [
 
   http.get('/api/products/all', () => {
     return HttpResponse.json(MOCK_PRODUCTS_LIST, { status: 200 });
+  }),
+
+  // Mock GET request trả về danh sách giỏ hàng
+  http.get('/api/cart', ({ request }) => {
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId');
+
+    // Check if the requested userId matches the mock cart's user_id
+    if (userId !== MOCK_CARTS.user_id) {
+      return HttpResponse.json([], { status: 200 });
+    }
+
+    const cartId = MOCK_CARTS.id;
+
+    const cartData = MOCK_CART_ITEMS
+      .filter(item => item.cart_id === cartId)
+      .map(cartItem => {
+        const inventoryItem = MOCK_INVENTORY_ITEMS.find(inv => inv.id === cartItem.inventory_item_id);
+        if (!inventoryItem) return null;
+
+        const caseType = MOCK_CASE_TYPES.find(ct => ct.id === inventoryItem.case_type_id);
+        const phoneModel = MOCK_PHONE_MODELS.find(pm => pm.id === inventoryItem.phone_model_id);
+
+        return {
+          id: cartItem.id,
+          name: caseType ? caseType.name : 'Unknown Product',
+          price: caseType ? caseType.price : 0,
+          quantity: cartItem.quantity,
+          imageUrl: caseType ? caseType.image_url : 'https://placehold.co/400x400?text=No+Image',
+          brand: phoneModel ? phoneModel.name : '',
+        };
+      }).filter(item => item !== null);
+
+    return HttpResponse.json(cartData, { status: 200 });
   }),
 
   // 3. Mock POST request for login

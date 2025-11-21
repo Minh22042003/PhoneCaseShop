@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Minus, Trash2, ShoppingCart } from 'lucide-react';
-import { sampleProducts } from '../../data/products';
+import { Plus, Minus, Trash2, ShoppingCart, Loader } from 'lucide-react';
 import { formatCurrency } from '../../util/format';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-
-// Mock data for cart items by adding quantity to sample products
-const initialCartItems = [
-    { ...sampleProducts[0], quantity: 1 },
-    { ...sampleProducts[2], quantity: 2 },
-    { ...sampleProducts[4], quantity: 1 },
-];
+import { useCart } from '../../hook/useCart';
 
 const Cart = () => {
     const { auth } = useAuth();
     const navigate = useNavigate();
+    const { cartItems: fetchedCartItems, isLoading } = useCart();
+
+    const [cartItems, setCartItems] = useState([]);
 
     useEffect(() => {
         // If not authenticated, redirect to login
@@ -22,7 +18,12 @@ const Cart = () => {
             navigate('/login', { replace: true });
         }
     }, [auth, navigate]);
-    const [cartItems, setCartItems] = useState(initialCartItems);
+
+    useEffect(() => {
+        if (fetchedCartItems) {
+            setCartItems(fetchedCartItems);
+        }
+    }, [fetchedCartItems]);
 
     const handleQuantityChange = (productId, newQuantity) => {
         if (newQuantity < 1) return;
@@ -40,6 +41,14 @@ const Cart = () => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const shippingFee = 30000; // Example shipping fee
     const total = subtotal + shippingFee;
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Loader className="animate-spin h-10 w-10 text-indigo-600" />
+            </div>
+        );
+    }
 
     if (cartItems.length === 0) {
         return (
@@ -63,14 +72,14 @@ const Cart = () => {
         <div className="bg-gray-100 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-10">Giỏ Hàng Của Bạn</h1>
-                
+
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Cart Items List */}
                     <div className="lg:col-span-2 bg-white rounded-xl shadow-lg p-6 space-y-6">
                         {cartItems.map(item => (
                             <div key={item.id} className="flex flex-col sm:flex-row items-center gap-4 border-b pb-6 last:border-b-0">
                                 <img src={item.imageUrl} alt={item.name} className="w-24 h-24 object-cover rounded-lg shadow-md" />
-                                
+
                                 <div className="flex-1 text-center sm:text-left">
                                     <h3 className="text-lg font-bold text-gray-800">{item.name}</h3>
                                     <p className="text-sm text-gray-500">{item.brand}</p>
