@@ -8,7 +8,9 @@ import {
   MOCK_INVENTORY_ITEMS,
   MOCK_CASE_TYPES,
   MOCK_PHONE_MODELS,
-  MOCK_CARTS
+  MOCK_CARTS,
+  MOCK_ORDER,
+  MOCK_ORDER_ITEMS
 } from './mockData'; // <-- IMPORT DỮ LIỆU
 
 export const handlers = [
@@ -102,5 +104,52 @@ export const handlers = [
     }
     // Otherwise, return error
     return HttpResponse.json({ message: 'Email hoặc mật khẩu không đúng.' }, { status: 401 });
+  }),
+
+  // 4. Mock POST request tạo đơn hàng
+  http.post('/api/orders', async ({ request }) => {
+    const orderData = await request.json();
+    // Simulate order creation
+    // In a real app, we would save this to the database and clear the cart.
+    // Here we just return the mock order.
+    return HttpResponse.json({ ...MOCK_ORDER, ...orderData, id: 'new_order_id' }, { status: 201 });
+  }),
+
+  // 5. Mock GET request lấy danh sách đơn hàng của user
+  http.get('/api/orders', ({ request }) => {
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId');
+
+    if (userId !== MOCK_ORDER.user_id) {
+      return HttpResponse.json([], { status: 200 });
+    }
+
+    // Return list containing the mock order
+    return HttpResponse.json([MOCK_ORDER], { status: 200 });
+  }),
+
+  // 6. Mock GET request lấy chi tiết đơn hàng
+  http.get('/api/orders/:orderId', ({ params }) => {
+    const { orderId } = params;
+    // For simplicity, always return the mock order if ID matches or if it's the new one
+    if (orderId === MOCK_ORDER.id || orderId === 'new_order_id') {
+      const orderItems = MOCK_ORDER_ITEMS.map(item => {
+        const inventoryItem = MOCK_INVENTORY_ITEMS.find(inv => inv.id === item.inventory_item_id);
+        if (!inventoryItem) return null;
+
+        const caseType = MOCK_CASE_TYPES.find(ct => ct.id === inventoryItem.case_type_id);
+        const phoneModel = MOCK_PHONE_MODELS.find(pm => pm.id === inventoryItem.phone_model_id);
+
+        return {
+          ...item,
+          name: caseType ? caseType.name : 'Unknown Product',
+          imageUrl: caseType ? caseType.image_url : '',
+          brand: phoneModel ? phoneModel.name : '',
+        }
+      }).filter(Boolean);
+
+      return HttpResponse.json({ ...MOCK_ORDER, items: orderItems }, { status: 200 });
+    }
+    return HttpResponse.json({ message: 'Order not found' }, { status: 404 });
   }),
 ];

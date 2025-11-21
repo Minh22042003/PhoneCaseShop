@@ -11,6 +11,8 @@ import Register from './pages/Register/Register'
 import DesighPhoneCase from './pages/DesighPhoneCase/DesighPhoneCase'
 import UserDetails from './pages/UserDetails/UserDetails'
 import EditUser from './pages/EditUser/EditUser'
+import Order from './pages/Order/Order'
+import OrderProcess from './pages/OrderProcess/OrderProcess'
 
 import { CartModalProvider } from './context/CartModalContext'
 import CartAddModal from './components/CartAddModal/CartAddModal'
@@ -35,6 +37,8 @@ const App = () => {
             <Route path='/register' element={<Register></Register>}></Route>
             <Route path='/user/:id' element={<UserDetails></UserDetails>}></Route>
             <Route path='/user/edit/:id' element={<EditUser></EditUser>}></Route>
+            <Route path='/order' element={<Order></Order>}></Route>
+            <Route path='/order-process' element={<OrderProcess></OrderProcess>}></Route>
           </Routes>
           <Footer></Footer>
         </CartModalProvider>

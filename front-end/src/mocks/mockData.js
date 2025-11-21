@@ -63,7 +63,14 @@ export const MOCK_CARTS = {id: '1', user_id: '1'}
 
 export const MOCK_CART_ITEMS = [
   {id: '1', cart_id: '1', inventory_item_id: 'inv1', design_id: '', quantity: 4, unit_price: 299000*4},
-  {id: '2', cart_id: '1', inventory_item_id: 'inv2', design_id: '', quantity: 2, unit_price: 109000*4}
+  {id: '2', cart_id: '1', inventory_item_id: 'inv2', design_id: '', quantity: 2, unit_price: 109000*2}
+]
+
+export const MOCK_ORDER = {id: '1', user_id:'1', total_amount: '1444000', status: 'pending', shipping_address: '', shipping_name: '', payment_method: '', note: '', create_at: '', update_at: ''}
+
+export const MOCK_ORDER_ITEMS = [
+  {id: '1', order_id: '1', inventory_item_id: 'inv1', quantity: 4, price: 299000*4, create_at: ''},
+  {id: '2', order_id: '1', inventory_item_id: 'inv2', quantity: 2, price: 109000*2, create_at: ''}
 ]
 
 

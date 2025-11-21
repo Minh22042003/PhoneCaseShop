@@ -123,7 +123,10 @@ const Cart = () => {
                                     <span>{formatCurrency(total)}</span>
                                 </div>
                             </div>
-                            <button className="w-full mt-6 bg-indigo-600 text-white py-3 rounded-lg font-semibold uppercase tracking-wider hover:bg-indigo-700 transition-all duration-300 shadow-md">
+                            <button
+                                onClick={() => navigate('/order')}
+                                className="w-full mt-6 bg-indigo-600 text-white py-3 rounded-lg font-semibold uppercase tracking-wider hover:bg-indigo-700 transition-all duration-300 shadow-md"
+                            >
                                 Tiến hành Thanh toán
                             </button>
                             <Link to="/product" className="block text-center mt-4 text-indigo-600 hover:underline font-medium">

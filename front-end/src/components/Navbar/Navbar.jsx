@@ -31,7 +31,7 @@ const Navbar = () => {
     <nav className="bg-white shadow-xl sticky top-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          
+
           {/* Logo / Tên Cửa Hàng */}
           <div className="flex-shrink-0">
             <a href="#" className="text-3xl font-extrabold text-indigo-700 tracking-wider font-serif">
@@ -99,6 +99,12 @@ const Navbar = () => {
                       >
                         Thông tin người dùng
                       </a>
+                      <a
+                        href="/order-process"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Theo dõi đơn hàng của bạn
+                      </a>
                       <button
                         onClick={() => {
                           setAuth({ user: null, token: null });
@@ -129,7 +135,7 @@ const Navbar = () => {
                 </div>
               )}
             </div>
-            
+
             {/* Nút Hamburger (Mobile) */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
