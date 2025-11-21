@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDesign } from '../../hook/useDesign';
 import { Link } from 'react-router-dom';
 import { Edit2, Trash2 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 // Mapping styles for camera based on ID (duplicated from DesighPhoneCase.jsx)
 const CAMERA_STYLES = {
@@ -13,11 +14,14 @@ const CAMERA_STYLES = {
 const PersonalDesign = () => {
     const { fetchUserDesigns, designs, isLoading, error } = useDesign();
     const [phoneModels, setPhoneModels] = useState({});
-    const userId = '1'; // Hardcoded for now
+    const { auth } = useAuth();
+    const userId = auth.user ? auth.user.id : null;
 
     useEffect(() => {
         const fetchData = async () => {
-            await fetchUserDesigns(userId);
+            if (userId) {
+                await fetchUserDesigns(userId);
+            }
             try {
                 const response = await fetch('/api/phone-models');
                 if (response.ok) {
@@ -40,6 +44,20 @@ const PersonalDesign = () => {
         };
         fetchData();
     }, [fetchUserDesigns, userId]);
+
+    if (!userId) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-2">Vui lòng đăng nhập</h2>
+                    <p className="text-gray-600 mb-4">Bạn cần đăng nhập để xem các thiết kế của mình.</p>
+                    <Link to="/login" className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                        Đăng nhập ngay
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     if (isLoading) {
         return (
