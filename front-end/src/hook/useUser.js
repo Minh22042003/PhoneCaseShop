@@ -1,10 +1,16 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { login, getUserById, updateUser } from '../api/userApi';
+import { login, adminLogin, getUserById, updateUser } from '../api/userApi';
 
 // Hook login sử dụng mutation
 export const useLogin = () => {
   return useMutation({
     mutationFn: login,
+  });
+};
+
+export const useAdminLogin = () => {
+  return useMutation({
+    mutationFn: adminLogin,
   });
 };
 

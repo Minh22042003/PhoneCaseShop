@@ -7,6 +7,8 @@ import ProductSearch from './pages/ProductSearch/ProductSearch'
 import Blog from './pages/Blog/Blog'
 import Contact from './pages/Contact/Contact'
 import Login from './pages/Login/Login'
+import AdminLogin from './pages/AdminLogin/AdminLogin'
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard'
 import Register from './pages/Register/Register'
 import DesighPhoneCase from './pages/DesighPhoneCase/DesighPhoneCase'
 import UserDetails from './pages/UserDetails/UserDetails'
@@ -35,6 +37,8 @@ const App = () => {
             <Route path='/cart' element={<Cart></Cart>}></Route>
             <Route path='/custom' element={<DesighPhoneCase></DesighPhoneCase>}></Route>
             <Route path='/login' element={<Login></Login>}></Route>
+            <Route path='/admin/login' element={<AdminLogin></AdminLogin>}></Route>
+            <Route path='/admin/dashboard' element={<AdminDashboard></AdminDashboard>}></Route>
             <Route path='/register' element={<Register></Register>}></Route>
             <Route path='/user/:id' element={<UserDetails></UserDetails>}></Route>
             <Route path='/user/edit/:id' element={<EditUser></EditUser>}></Route>

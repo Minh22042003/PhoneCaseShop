@@ -1,6 +1,5 @@
 import { http, HttpResponse } from 'msw';
 import {
-  MOCK_USERS_DATA,
   MOCK_POST_DETAIL,
   MOCK_PRODUCTS_LIST,
   MOCK_USER_BY_ID,
@@ -11,13 +10,34 @@ import {
   MOCK_CARTS,
   MOCK_ORDER,
   MOCK_ORDER_ITEMS,
-  MOCK_DESIGNS
+  MOCK_DESIGNS,
+  MOCK_ADMIN_ACCOUNT,
+  MOCK_USERS
 } from './mockData';
 
 export const handlers = [
-  // 1. Mock GET request trả về danh sách người dùng
-  http.get('/api/users', () => {
-    return HttpResponse.json(MOCK_USERS_DATA, { status: 200 });
+  http.get('/api/admin/users', () => {
+    return HttpResponse.json(MOCK_USERS, { status: 200 });
+  }),
+
+  // Mock GET request for all case types (products)
+  http.get('/api/admin/products', () => {
+    return HttpResponse.json(MOCK_CASE_TYPES, { status: 200 });
+  }),
+
+  // Mock GET request for inventory items
+  http.get('/api/admin/inventory', () => {
+    // Enrich inventory items with product details
+    const inventory = MOCK_INVENTORY_ITEMS.map(item => {
+      const phoneModel = MOCK_PHONE_MODELS.find(pm => pm.id === item.phone_model_id);
+      const caseType = MOCK_CASE_TYPES.find(ct => ct.id === item.case_type_id);
+      return {
+        ...item,
+        phone_model_name: phoneModel ? phoneModel.name : item.phone_model_id,
+        case_type_name: caseType ? caseType.name : item.case_type_id,
+      };
+    });
+    return HttpResponse.json(inventory, { status: 200 });
   }),
 
   http.get('/api/users/:userId', ({ params }) => {
@@ -98,6 +118,34 @@ export const handlers = [
       }, { status: 200 });
     }
     return HttpResponse.json({ message: 'Email hoặc mật khẩu không đúng.' }, { status: 401 });
+  }),
+
+  // Mock POST request for ADMIN login
+  http.post('/api/admin/login', async ({ request }) => {
+    const { email, password } = await request.json();
+    // Check against MOCK_ADMIN_ACCOUNT
+    if (email === MOCK_ADMIN_ACCOUNT.email && password === '123456') {
+      return HttpResponse.json({
+        user: {
+          ...MOCK_ADMIN_ACCOUNT
+        },
+        token: 'mock-admin-jwt-token',
+      }, { status: 200 });
+    }
+    return HttpResponse.json({ message: 'Email hoặc mật khẩu quản trị viên không đúng.' }, { status: 401 });
+  }),
+
+  // Mock GET request to check ADMIN auth
+  http.get('/api/admin/check-auth', ({ request }) => {
+    const authHeader = request.headers.get('Authorization');
+    if (authHeader === 'Bearer mock-admin-jwt-token') {
+      return HttpResponse.json({
+        user: {
+          ...MOCK_ADMIN_ACCOUNT
+        }
+      }, { status: 200 });
+    }
+    return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }),
 
   // 4. Mock POST request tạo đơn hàng

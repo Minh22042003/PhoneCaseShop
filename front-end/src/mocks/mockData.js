@@ -1,10 +1,3 @@
-// Định nghĩa dữ liệu mẫu của danh sách người dùng
-export const MOCK_USERS_DATA = [
-  { id: 1, name: 'Bảo', email: 'bao@example.com', status: 'active' },
-  { id: 2, name: 'Ngọc', email: 'ngoc@example.com', status: 'active' },
-  { id: 3, name: 'Tài', email: 'tai@example.com', status: 'inactive' },
-];
-
 // Định nghĩa dữ liệu mẫu cho một bài post cụ thể
 export const MOCK_POST_DETAIL = {
   postId: 'p101',
@@ -82,6 +75,13 @@ export const MOCK_ROLES = [
 
 export const MOCK_ADMIN_ACCOUNT = { id: '0', name: 'admin', email: 'admin@gmail.com', phone: '01234567', role_id: '1', create_at: '' }
 
+export const MOCK_USERS = [
+  {id: '1',name: 'Bảo',email: 'bao@example.com',phone: '0123456789',},
+  {id: '2',name: 'Minh',email: 'minh@example.com',phone: '0987654321',},
+  {id: '3',name: 'Lan',email: 'lan@example.com',phone: '0911222333',},
+  {id: '4',name: 'Hùng',email: 'hung@example.com',phone: '0933444555',},
+  {id: '5',name: 'Trâm',email: 'tram@example.com',phone: '0977555444',},
+];
 
 
 
