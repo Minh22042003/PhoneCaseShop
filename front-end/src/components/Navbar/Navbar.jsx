@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Menu, X, Search, ShoppingCart, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../hook/useCart';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
   const { auth, setAuth } = useAuth();
+  const { cartItems } = useCart();
+
+  const totalQuantity = cartItems?.length || 0;
+
   const navItems = [
     { name: 'Trang Chủ', href: '/' },
     { name: 'Sản Phẩm', href: '/product' },
@@ -34,7 +39,7 @@ const Navbar = () => {
 
           {/* Logo / Tên Cửa Hàng */}
           <div className="flex-shrink-0">
-            <a href="#" className="text-3xl font-extrabold text-indigo-700 tracking-wider font-serif">
+            <a href="/" className="text-3xl font-extrabold text-indigo-700 tracking-wider font-serif">
               CaseShop
             </a>
             <span className="ml-2 text-xs text-gray-500 hidden sm:inline">Phụ kiện & Phong cách</span>
@@ -71,7 +76,11 @@ const Navbar = () => {
             >
               <ShoppingCart className="h-5 w-5" />
               {/* Badge số lượng sản phẩm */}
-              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">3</span>
+              {totalQuantity > 0 && (
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                  {totalQuantity}
+                </span>
+              )}
             </a>
 
             {/* Tài Khoản / User */}
@@ -104,6 +113,12 @@ const Navbar = () => {
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         Theo dõi đơn hàng của bạn
+                      </a>
+                      <a
+                        href="/personal-design"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Thiết kế của bạn
                       </a>
                       <button
                         onClick={() => {

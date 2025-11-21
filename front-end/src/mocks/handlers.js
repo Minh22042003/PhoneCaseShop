@@ -10,13 +10,13 @@ import {
   MOCK_PHONE_MODELS,
   MOCK_CARTS,
   MOCK_ORDER,
-  MOCK_ORDER_ITEMS
-} from './mockData'; // <-- IMPORT DỮ LIỆU
+  MOCK_ORDER_ITEMS,
+  MOCK_DESIGNS
+} from './mockData';
 
 export const handlers = [
   // 1. Mock GET request trả về danh sách người dùng
   http.get('/api/users', () => {
-    // Trả về toàn bộ array MOCK_USERS_DATA
     return HttpResponse.json(MOCK_USERS_DATA, { status: 200 });
   }),
 
@@ -41,11 +41,9 @@ export const handlers = [
     const { postId } = params;
 
     if (postId === 'p101') {
-      // Trả về object MOCK_POST_DETAIL
       return HttpResponse.json(MOCK_POST_DETAIL, { status: 200 });
     }
 
-    // Trường hợp không tìm thấy bài post
     return HttpResponse.json({ message: 'Post not found' }, { status: 404 });
   }),
 
@@ -58,7 +56,6 @@ export const handlers = [
     const url = new URL(request.url);
     const userId = url.searchParams.get('userId');
 
-    // Check if the requested userId matches the mock cart's user_id
     if (userId !== MOCK_CARTS.user_id) {
       return HttpResponse.json([], { status: 200 });
     }
@@ -90,9 +87,7 @@ export const handlers = [
   // 3. Mock POST request for login
   http.post('/api/login', async ({ request }) => {
     const { email, password } = await request.json();
-    // Simple mock: accept any email ending with @example.com and password '123456'
     if (typeof email === 'string' && email.endsWith('@example.com') && password === '123456') {
-      // Return a fake user object and token
       return HttpResponse.json({
         user: {
           id: 1,
@@ -102,16 +97,12 @@ export const handlers = [
         token: 'mock-jwt-token',
       }, { status: 200 });
     }
-    // Otherwise, return error
     return HttpResponse.json({ message: 'Email hoặc mật khẩu không đúng.' }, { status: 401 });
   }),
 
   // 4. Mock POST request tạo đơn hàng
   http.post('/api/orders', async ({ request }) => {
     const orderData = await request.json();
-    // Simulate order creation
-    // In a real app, we would save this to the database and clear the cart.
-    // Here we just return the mock order.
     return HttpResponse.json({ ...MOCK_ORDER, ...orderData, id: 'new_order_id' }, { status: 201 });
   }),
 
@@ -124,14 +115,12 @@ export const handlers = [
       return HttpResponse.json([], { status: 200 });
     }
 
-    // Return list containing the mock order
     return HttpResponse.json([MOCK_ORDER], { status: 200 });
   }),
 
   // 6. Mock GET request lấy chi tiết đơn hàng
   http.get('/api/orders/:orderId', ({ params }) => {
     const { orderId } = params;
-    // For simplicity, always return the mock order if ID matches or if it's the new one
     if (orderId === MOCK_ORDER.id || orderId === 'new_order_id') {
       const orderItems = MOCK_ORDER_ITEMS.map(item => {
         const inventoryItem = MOCK_INVENTORY_ITEMS.find(inv => inv.id === item.inventory_item_id);
@@ -151,5 +140,32 @@ export const handlers = [
       return HttpResponse.json({ ...MOCK_ORDER, items: orderItems }, { status: 200 });
     }
     return HttpResponse.json({ message: 'Order not found' }, { status: 404 });
+  }),
+
+  // 7. Mock GET request lấy danh sách mẫu điện thoại
+  http.get('/api/phone-models', () => {
+    return HttpResponse.json(MOCK_PHONE_MODELS, { status: 200 });
+  }),
+
+  // 8. Mock POST request tạo bản thiết kế mới
+  http.post('/api/designs', async ({ request }) => {
+    const designData = await request.json();
+    // Trả về dữ liệu đã nhận kèm theo ID mới và status success
+    return HttpResponse.json({
+      ...designData,
+      id: 'new_design_id_' + Date.now(),
+      status: 'success',
+      created_at: new Date().toISOString()
+    }, { status: 201 });
+  }),
+
+  // 9. Mock GET request lấy danh sách thiết kế của user
+  http.get('/api/designs', ({ request }) => {
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId');
+
+    // Trong môi trường thật, sẽ lọc theo userId. 
+    // Ở đây ta trả về MOCK_DESIGNS (được wrap trong mảng vì MOCK_DESIGNS là object đơn lẻ trong mockData hiện tại)
+    return HttpResponse.json([MOCK_DESIGNS], { status: 200 });
   }),
 ];
