@@ -1,8 +1,9 @@
-export const createDesign = async (designData) => {
+export const createDesign = async (designData, token) => {
     const response = await fetch('/api/designs', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(designData),
     });
@@ -14,8 +15,12 @@ export const createDesign = async (designData) => {
     return response.json();
 };
 
-export const getDesigns = async (userId) => {
-    const response = await fetch(`/api/designs?userId=${userId}`);
+export const getDesigns = async (userId, token) => {
+    const response = await fetch(`/api/designs?userId=${userId}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
 
     if (!response.ok) {
         throw new Error('Failed to fetch designs');

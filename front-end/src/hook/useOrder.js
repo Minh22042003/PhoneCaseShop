@@ -4,8 +4,9 @@ import { useAuth } from '../context/AuthContext';
 
 export const useCreateOrder = () => {
     const queryClient = useQueryClient();
+    const { auth } = useAuth();
     return useMutation({
-        mutationFn: createOrder,
+        mutationFn: (orderData) => createOrder(orderData, auth?.token),
         onSuccess: () => {
             queryClient.invalidateQueries(['orders']);
             queryClient.invalidateQueries(['cart']); // Assuming cart is cleared after order
@@ -19,18 +20,19 @@ export const useOrders = () => {
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['orders', userId],
-        queryFn: () => getOrders(userId),
-        enabled: !!userId,
+        queryFn: () => getOrders(userId, auth?.token),
+        enabled: !!userId && !!auth?.token,
     });
 
     return { orders: data, isLoading, error };
 };
 
 export const useOrder = (orderId) => {
+    const { auth } = useAuth();
     const { data, isLoading, error } = useQuery({
         queryKey: ['order', orderId],
-        queryFn: () => getOrderById(orderId),
-        enabled: !!orderId,
+        queryFn: () => getOrderById(orderId, auth?.token),
+        enabled: !!orderId && !!auth?.token,
     });
 
     return { order: data, isLoading, error };

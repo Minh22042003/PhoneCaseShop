@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-
-
 // Đăng nhập: trả về { user, token } hoặc throw lỗi
 export const login = async ({ email, password }) => {
   const response = await axios.post('/api/login', { email, password });
@@ -22,13 +20,21 @@ export const checkAdminAuth = async (token) => {
   return response.data;
 };
 
-export const getUserById = async (userId) => {
-  const response = await axios.get(`/api/users/${userId}`);
+export const getUserById = async (userId, token) => {
+  const response = await axios.get(`/api/users/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
   return response.data;
 };
 
-export const updateUser = async (userId, userData) => {
-  const response = await axios.put(`/api/users/${userId}`, userData);
+export const updateUser = async (userId, userData, token) => {
+  const response = await axios.put(`/api/users/${userId}`, userData, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
   return response.data;
 };
 

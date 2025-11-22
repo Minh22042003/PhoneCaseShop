@@ -8,8 +8,8 @@ export const useCart = () => {
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['cart', userId],
-        queryFn: () => getCart(userId),
-        enabled: !!userId, // Only fetch if userId exists
+        queryFn: () => getCart(userId, auth?.token),
+        enabled: !!userId && !!auth?.token, // Only fetch if userId and token exist
         staleTime: 1000 * 60 * 5, // 5 minutes
     });
 

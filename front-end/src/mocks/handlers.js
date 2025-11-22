@@ -40,16 +40,24 @@ export const handlers = [
     return HttpResponse.json(inventory, { status: 200 });
   }),
 
-  http.get('/api/users/:userId', ({ params }) => {
+  http.get('/api/users/:userId', ({ params, request }) => {
     const { userId } = params;
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     if (userId === '1') {
       return HttpResponse.json(MOCK_USER_BY_ID, { status: 200 });
     }
     return HttpResponse.json({ message: 'User not found' }, { status: 404 });
   }),
 
-  http.put('/api/users/:userId', ({ params }) => {
+  http.put('/api/users/:userId', ({ params, request }) => {
     const { userId } = params;
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     if (userId === '1') {
       return HttpResponse.json(MOCK_USER_BY_ID, { status: 200 });
     }
@@ -78,6 +86,11 @@ export const handlers = [
 
     if (userId !== MOCK_CARTS.user_id) {
       return HttpResponse.json([], { status: 200 });
+    }
+
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const cartId = MOCK_CARTS.id;
@@ -150,6 +163,10 @@ export const handlers = [
 
   // 4. Mock POST request tạo đơn hàng
   http.post('/api/orders', async ({ request }) => {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     const orderData = await request.json();
     return HttpResponse.json({ ...MOCK_ORDER, ...orderData, id: 'new_order_id' }, { status: 201 });
   }),
@@ -159,6 +176,11 @@ export const handlers = [
     const url = new URL(request.url);
     const userId = url.searchParams.get('userId');
 
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
     if (userId !== MOCK_ORDER.user_id) {
       return HttpResponse.json([], { status: 200 });
     }
@@ -167,8 +189,12 @@ export const handlers = [
   }),
 
   // 6. Mock GET request lấy chi tiết đơn hàng
-  http.get('/api/orders/:orderId', ({ params }) => {
+  http.get('/api/orders/:orderId', ({ params, request }) => {
     const { orderId } = params;
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     if (orderId === MOCK_ORDER.id || orderId === 'new_order_id') {
       const orderItems = MOCK_ORDER_ITEMS.map(item => {
         const inventoryItem = MOCK_INVENTORY_ITEMS.find(inv => inv.id === item.inventory_item_id);
@@ -197,6 +223,10 @@ export const handlers = [
 
   // 8. Mock POST request tạo bản thiết kế mới
   http.post('/api/designs', async ({ request }) => {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     const designData = await request.json();
     // Trả về dữ liệu đã nhận kèm theo ID mới và status success
     return HttpResponse.json({
@@ -211,6 +241,11 @@ export const handlers = [
   http.get('/api/designs', ({ request }) => {
     const url = new URL(request.url);
     const userId = url.searchParams.get('userId');
+
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
 
     // Trong môi trường thật, sẽ lọc theo userId. 
     // Ở đây ta trả về MOCK_DESIGNS (được wrap trong mảng vì MOCK_DESIGNS là object đơn lẻ trong mockData hiện tại)
