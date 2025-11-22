@@ -16,17 +16,29 @@ import {
 } from './mockData';
 
 export const handlers = [
-  http.get('/api/admin/users', () => {
+  http.get('/api/admin/users', ({ request }) => {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     return HttpResponse.json(MOCK_USERS, { status: 200 });
   }),
 
   // Mock GET request for all case types (products)
-  http.get('/api/admin/products', () => {
+  http.get('/api/admin/products', ({ request }) => {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     return HttpResponse.json(MOCK_CASE_TYPES, { status: 200 });
   }),
 
   // Mock GET request for inventory items
-  http.get('/api/admin/inventory', () => {
+  http.get('/api/admin/inventory', ({ request }) => {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     // Enrich inventory items with product details
     const inventory = MOCK_INVENTORY_ITEMS.map(item => {
       const phoneModel = MOCK_PHONE_MODELS.find(pm => pm.id === item.phone_model_id);

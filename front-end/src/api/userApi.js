@@ -38,17 +38,29 @@ export const updateUser = async (userId, userData, token) => {
   return response.data;
 };
 
-export const getAdminUsers = async () => {
-  const response = await axios.get('/api/admin/users');
+export const getAdminUsers = async (token) => {
+  const response = await axios.get('/api/admin/users', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
   return response.data;
 };
 
-export const getAdminProducts = async () => {
-  const response = await axios.get('/api/admin/products');
+export const getAdminProducts = async (token) => {
+  const response = await axios.get('/api/admin/products', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
   return response.data;
 };
 
-export const getAdminInventory = async () => {
-  const response = await axios.get('/api/admin/inventory');
+export const getAdminInventory = async (token) => {
+  const response = await axios.get('/api/admin/inventory', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
   return response.data;
 };
