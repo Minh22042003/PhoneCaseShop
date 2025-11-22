@@ -255,7 +255,7 @@ export const handlers = [
     const userId = url.searchParams.get('userId');
 
     const authHeader = request.headers.get('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!authHeader || !authHeader.startsWith('Bearer ') || userId !== '1') {
       return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
