@@ -13,16 +13,14 @@ const EditUser = () => {
         name: '',
         email: '',
         phone: '',
-        address: ''
     });
 
     useEffect(() => {
         if (user) {
             setFormData({
-                name: user.name || '',
-                email: user.email || '',
-                phone: user.phone || '',
-                address: user.address || ''
+                name: user.data.name || '',
+                email: user.data.email || '',
+                phone: user.data.phone || '',
             });
         }
     }, [user]);
@@ -87,15 +85,6 @@ const EditUser = () => {
                         id="phone"
                         name="phone"
                         value={formData.phone}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="address">Address</label>
-                    <textarea
-                        id="address"
-                        name="address"
-                        value={formData.address}
                         onChange={handleChange}
                     />
                 </div>

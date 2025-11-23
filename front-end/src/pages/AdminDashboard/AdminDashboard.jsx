@@ -26,7 +26,7 @@ const AdminDashboard = () => {
     // Data fetching hooks
     const { data: users, isLoading: isLoadingUsers } = useAdminUsers();
     const { data: products, isLoading: isLoadingProducts } = useAdminProducts();
-    const { data: inventory, isLoading: isLoadingInventory } = useAdminInventory();
+    const { data: inventory, isLoading: isLoadingInventory } = useAdminInventory();//
 
     useEffect(() => {
         const verifyAdmin = async () => {
@@ -121,7 +121,7 @@ const AdminDashboard = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {users?.map((user) => (
+                                        {users?.data?.map((user) => (
                                             <tr key={user.id}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.id}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>

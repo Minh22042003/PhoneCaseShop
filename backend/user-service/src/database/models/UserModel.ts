@@ -6,6 +6,7 @@ export interface IUser extends Document {
     email: string;
     password: string;
     phone: string;
+    role_id: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -37,11 +38,26 @@ const UserSchema: Schema = new Schema(
             trim: true,
             minlength: 10,
         },
+        role_id: {
+            type: Schema.Types.ObjectId,
+            ref: "Role",
+        },
     },
     {
         timestamps: true,
     }
 );
+
+UserSchema.pre("save", async function (next) {
+    if (this.isNew && !this.role_id) {
+        const Role = mongoose.model("Role");
+        const userRole = await Role.findOne({ name: "USER" });
+        if (userRole) {
+            this.role_id = userRole._id;
+        }
+    }
+    next();
+});
 
 const User = mongoose.model<IUser>("User", UserSchema);
 export default User;

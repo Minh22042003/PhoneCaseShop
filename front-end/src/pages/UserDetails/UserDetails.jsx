@@ -26,23 +26,23 @@ const UserDetails = () => {
             <div className="user-details-card">
                 <div className="user-details-item">
                     <span className="user-details-label">ID:</span>
-                    <span className="user-details-value">{user.id}</span>
+                    <span className="user-details-value">{user.data._id}</span>
                 </div>
                 <div className="user-details-item">
                     <span className="user-details-label">Name:</span>
-                    <span className="user-details-value">{user.name}</span>
+                    <span className="user-details-value">{user.data.name}</span>
                 </div>
                 <div className="user-details-item">
                     <span className="user-details-label">Email:</span>
-                    <span className="user-details-value">{user.email}</span>
+                    <span className="user-details-value">{user.data.email}</span>
                 </div>
                 <div className="user-details-item">
                     <span className="user-details-label">Phone:</span>
-                    <span className="user-details-value">{user.phone || 'N/A'}</span>
+                    <span className="user-details-value">{user.data.phone || 'N/A'}</span>
                 </div>
                 <div className="user-details-item">
                     <span className="user-details-label">Address:</span>
-                    <span className="user-details-value">{user.address || 'N/A'}</span>
+                    <span className="user-details-value">{user.data.address || 'N/A'}</span>
                 </div>
             </div>
             <div className="user-details-actions">

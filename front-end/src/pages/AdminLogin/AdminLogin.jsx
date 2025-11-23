@@ -23,7 +23,7 @@ const AdminLogin = () => {
             {
                 onSuccess: (data) => {
                     setSuccess('Đăng nhập quản trị viên thành công!');
-                    setAuth({ user: data.user, token: data.token });
+                    setAuth({ user: data.data, token: data.token });
                     // Redirect to admin dashboard or home
                     navigate('/admin/dashboard', { replace: true });
                 },

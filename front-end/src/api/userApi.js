@@ -13,12 +13,12 @@ export const register = async ({ name, email, password }) => {
 };
 
 export const adminLogin = async ({ email, password }) => {
-  const response = await axios.post('/api/admin/login', { email, password });
+  const response = await axios.post('http://localhost:8081/admin/login', { email, password });
   return response.data;
 };
 
 export const checkAdminAuth = async (token) => {
-  const response = await axios.get('/api/admin/check-auth', {
+  const response = await axios.get('http://localhost:8081/admin/check', {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -26,8 +26,8 @@ export const checkAdminAuth = async (token) => {
   return response.data;
 };
 
-export const getUserById = async (userId, token) => {
-  const response = await axios.get(`/api/users/${userId}`, {
+export const getUserDetails = async (token) => {
+  const response = await axios.get(`http://localhost:8081/me`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -36,7 +36,7 @@ export const getUserById = async (userId, token) => {
 };
 
 export const updateUser = async (userId, userData, token) => {
-  const response = await axios.put(`/api/users/${userId}`, userData, {
+  const response = await axios.put(`http://localhost:8081/update`, userData, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -45,7 +45,7 @@ export const updateUser = async (userId, userData, token) => {
 };
 
 export const getAdminUsers = async (token) => {
-  const response = await axios.get('/api/admin/users', {
+  const response = await axios.get('http://localhost:8081/admin/users', {
     headers: {
       Authorization: `Bearer ${token}`
     }
