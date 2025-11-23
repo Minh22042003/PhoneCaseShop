@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { login, adminLogin, getUserById, updateUser } from '../api/userApi';
+import { login, register, adminLogin, getUserById, updateUser } from '../api/userApi';
 
 import { useAuth } from '../context/AuthContext';
 
@@ -7,6 +7,13 @@ import { useAuth } from '../context/AuthContext';
 export const useLogin = () => {
   return useMutation({
     mutationFn: login,
+  });
+};
+
+// Hook register sử dụng mutation
+export const useRegister = () => {
+  return useMutation({
+    mutationFn: register,
   });
 };
 

@@ -2,7 +2,13 @@ import axios from 'axios';
 
 // Đăng nhập: trả về { user, token } hoặc throw lỗi
 export const login = async ({ email, password }) => {
-  const response = await axios.post('/api/login', { email, password });
+  const response = await axios.post('http://localhost:8081/login', { email, password });
+  return response.data;
+};
+
+// Đăng ký: trả về { user, token } hoặc throw lỗi
+export const register = async ({ name, email, password }) => {
+  const response = await axios.post('http://localhost:8081/register', { name, email, password });
   return response.data;
 };
 

@@ -5,9 +5,22 @@ import { errorConverter, errorHandler } from "./middleware";
 import { connectDB } from "./database";
 import config from "./config/config";
 import { rabbitMQService } from "./services/RabbitMQService";
+import cors from "cors";
 
 const app: Express = express();
 let server: Server;
+
+const allowedOrigin = 'http://localhost:5173'; 
+
+const corsOptions = {
+  origin: allowedOrigin, 
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
+  credentials: true, 
+  optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions)); 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(userRouter);

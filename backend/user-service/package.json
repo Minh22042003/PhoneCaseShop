@@ -19,6 +19,7 @@
     "@types/validator": "^13.15.3",
     "amqplib": "^0.10.9",
     "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -29,6 +30,7 @@
     "validator": "^13.15.15"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "cross-env": "^10.1.0"
   }
 }

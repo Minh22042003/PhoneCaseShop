@@ -73,9 +73,16 @@ const login = async (req: Request, res: Response) => {
 
         const token = await createSendToken(user!, res);
 
+        const userData = {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+        };
+
         return res.json({
             status: 200,
             message: "User logged in successfully!",
+            data: userData,
             token,
         });
     } catch (error: any) {

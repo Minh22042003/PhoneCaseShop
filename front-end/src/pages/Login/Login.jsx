@@ -23,7 +23,7 @@ const Login = () => {
             {
                 onSuccess: (data) => {
                     setSuccess('Đăng nhập thành công!');
-                    setAuth({ user: data.user, token: data.token });
+                    setAuth({ user: data.data, token: data.token });
                     // Redirect to home after successful login
                     navigate('/', { replace: true });
                 },

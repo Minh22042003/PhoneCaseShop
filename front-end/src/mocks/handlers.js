@@ -145,6 +145,32 @@ export const handlers = [
     return HttpResponse.json({ message: 'Email hoặc mật khẩu không đúng.' }, { status: 401 });
   }),
 
+  http.post('/api/register', async ({ request }) => {
+    const { name, email, password } = await request.json();
+    
+    // Validate required fields
+    if (!name || !email || !password) {
+      return HttpResponse.json({ message: 'Các trường bắt buộc không được để trống.' }, { status: 400 });
+    }
+
+    // Simulate checking if email already exists
+    if (email === 'exist@example.com') {
+      return HttpResponse.json({ message: 'Email đã được đăng ký.' }, { status: 409 });
+    }
+
+    // Mock successful registration
+    const newUser = {
+      id: Math.floor(Math.random() * 10000),
+      name,
+      email,
+    };
+
+    return HttpResponse.json({
+      user: newUser,
+      token: 'mock-jwt-token',
+    }, { status: 201 });
+  }),
+
   // Mock POST request for ADMIN login
   http.post('/api/admin/login', async ({ request }) => {
     const { email, password } = await request.json();
