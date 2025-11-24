@@ -1,7 +1,100 @@
-mkdir src
-mkdir src\config src\controllers src\services src\database src\middleware src\routes src\utils
-mkdir src\database\models
+Context: I am building a microservices-based e-commerce application. I need you to generate the boilerplate code for a new service called product-service, order-service, inventory-service.
 
-#Power shell
-mkdir -Path 'src/config', 'src/controllers', 'src/services', 'src/database/models', 'src/middleware', 'src/routes', 'src/utils'
-New-Item -ItemType File -Path 'config/config.ts', 'controllers/AuthController.ts', 'services/RabbitMQService.ts', 'database/models/UserModel.ts', 'database/connection.ts', 'database/index.ts', 'middleware/index.ts', 'routes/authRoutes.ts', 'utils/index.ts', 'server.ts'
+Goal: Create a robust, production-ready Node.js/TypeScript backend service that strictly follows the architecture, technology stack, and coding patterns of my existing user-service.
+
+1. Technology Stack:
+
+Runtime: Node.js
+Language: TypeScript
+Framework: Express.js
+Database: MongoDB with Mongoose (ODM)
+Message Broker: RabbitMQ (using amqplib)
+Authentication: JWT (JSON Web Tokens)
+Security: bcryptjs (if password handling is needed), cors, dotenv
+Utilities: jsonwebtoken
+2. Project Structure: Please organize the src directory exactly as follows:
+
+text
+src/
+├── config/             # Environment variables configuration (config.ts)
+├── controllers/        # Request handlers (business logic)
+├── database/           # Database connection and Mongoose models
+│   ├── models/         # Schema definitions
+│   ├── connection.ts   # Database connection logic
+│   └── index.ts        # Exports
+├── middleware/         # Custom middleware (auth, error handling)
+├── routes/             # API route definitions
+├── services/           # External services (e.g., RabbitMQService.ts)
+├── utils/              # Utility classes/functions (ApiError, etc.)
+└── server.ts           # Entry point
+
+3. Key Implementation Details & Patterns:
+
+Entry Point (
+server.ts
+):
+Initialize Express app.
+Configure CORS and JSON/URL-encoded parsers.
+Connect to MongoDB (
+connectDB()
+).
+Initialize RabbitMQ Service (rabbitMQService.init()).
+Mount routes.
+Use global error handling middleware (errorConverter, errorHandler).
+Handle graceful shutdowns and uncaught exceptions.
+Configuration (
+config/config.ts
+):
+Use dotenv to load variables.
+Export a typed config object including: PORT, MONGO_URI, JWT_SECRET, NODE_ENV, MESSAGE_BROKER_URL.
+Database (database/):
+Use Mongoose schemas with TypeScript interfaces.
+Export models from 
+database/index.ts
+.
+Error Handling (utils/ApiError.ts & middleware/):
+Create a custom 
+ApiError
+ class (extending 
+Error
+) with statusCode and isOperational properties.
+Implement errorConverter and errorHandler middleware to standardize JSON error responses.
+Authentication Middleware (
+middleware/authMiddleware.ts
+):
+Implement a 
+protect
+ middleware to verify JWT tokens from the Authorization header.
+(Optional) Implement 
+verifyAdmin
+ if role-based access is required.
+Messaging (
+services/RabbitMQService.ts
+):
+Create a class to handle RabbitMQ connections.
+Implement methods to 
+init()
+ connection/channels and publish or consume messages.
+Use correlation IDs if implementing request/response patterns.
+Controllers:
+Use async/await for all asynchronous operations.
+Use try/catch blocks and pass errors to next() or return standard JSON responses.
+Return standardized JSON responses: { status: number, message: string, data: any }.
+4. Specific Requirements for [INSERT_SERVICE_NAME_HERE]:
+
+Data Models: Please create the following Mongoose models:
+[Model Name 1]: Fields [list fields...]
+[Model Name 2]: Fields [list fields...]
+API Endpoints:
+GET /api/[resource]: List items
+POST /api/[resource]: Create item
+[Add other specific routes...]
+5. Output: Please generate the code for the core files (
+server.ts
+, 
+config.ts
+, database connection, 
+ApiError
+, 
+RabbitMQService
+) and the specific models/controllers/routes for this service.

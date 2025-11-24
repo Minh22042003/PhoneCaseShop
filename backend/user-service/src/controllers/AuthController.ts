@@ -51,7 +51,16 @@ const register = async (req: Request, res: Response) => {
 
 const createSendToken = async (user: IUser, res: Response) => {
     const { name, email, id } = user;
-    const token = jwt.sign({ name, email, id }, jwtSecret, {
+
+    let roleName = "USER";
+    if (user.role_id) {
+        const role = await Role.findById(user.role_id);
+        if (role) {
+            roleName = role.name;
+        }
+    }
+
+    const token = jwt.sign({ name, email, id, role: roleName }, jwtSecret, {
         expiresIn: "1d",
     });
     if (config.env === "production") cookieOptions.secure = true;

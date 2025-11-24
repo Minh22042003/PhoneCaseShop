@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { checkAdminAuth } from '../../api/userApi';
-import { useAdminUsers, useAdminProducts, useAdminInventory } from '../../hook/useAdmin';
-import { useUpdateAdminUser, useCreateAdminUser, useDeleteAdminUser, useRoles } from '../../hook/useUser';
+import { useAdminUsers, useAdminProducts, useAdminInventory, useAdminPhoneModels } from '../../hook/useAdmin';
+import { useUpdateAdminUser, useCreateAdminUser, useDeleteAdminUser, useRoles, useCreateAdminProduct, useUpdateAdminProduct, useDeleteAdminProduct, useCreateAdminPhoneModel, useUpdateAdminPhoneModel, useDeleteAdminPhoneModel, useCreateAdminInventory, useUpdateAdminInventory, useDeleteAdminInventory } from '../../hook/useUser';
 import {
     Users,
     BarChart2,
@@ -27,7 +27,8 @@ const AdminDashboard = () => {
     // Data fetching hooks
     const { data: users, isLoading: isLoadingUsers } = useAdminUsers();
     const { data: products, isLoading: isLoadingProducts } = useAdminProducts();
-    const { data: inventory, isLoading: isLoadingInventory } = useAdminInventory();//
+    const { data: inventory, isLoading: isLoadingInventory } = useAdminInventory();
+    const { data: phoneModels, isLoading: isLoadingPhoneModels } = useAdminPhoneModels();
 
     // useUpdateAdminUser hook handles invalidation internally
 
@@ -50,6 +51,60 @@ const AdminDashboard = () => {
     const createMutation = useCreateAdminUser();
     const deleteMutation = useDeleteAdminUser();
     const { data: rolesData } = useRoles();
+
+    // Product management state
+    const [creatingProduct, setCreatingProduct] = useState(false);
+    const [newProductName, setNewProductName] = useState('');
+    const [newProductDescription, setNewProductDescription] = useState('');
+    const [newProductPrice, setNewProductPrice] = useState('');
+    const [newProductImageUrl, setNewProductImageUrl] = useState('');
+
+    // Edit product state
+    const [editingProduct, setEditingProduct] = useState(null);
+    const [editProductName, setEditProductName] = useState('');
+    const [editProductDescription, setEditProductDescription] = useState('');
+    const [editProductPrice, setEditProductPrice] = useState('');
+    const [editProductImageUrl, setEditProductImageUrl] = useState('');
+
+    const createProductMutation = useCreateAdminProduct();
+    const updateProductMutation = useUpdateAdminProduct();
+    const deleteProductMutation = useDeleteAdminProduct();
+
+    // Phone model management state
+    const [creatingPhoneModel, setCreatingPhoneModel] = useState(false);
+    const [newPhoneModelName, setNewPhoneModelName] = useState('');
+    const [newPhoneModelAspectRatio, setNewPhoneModelAspectRatio] = useState('');
+    const [newPhoneModelBorderRadius, setNewPhoneModelBorderRadius] = useState('');
+    const [newPhoneModelCameraTop, setNewPhoneModelCameraTop] = useState('');
+    const [newPhoneModelCameraRight, setNewPhoneModelCameraRight] = useState('');
+
+    // Edit phone model state
+    const [editingPhoneModel, setEditingPhoneModel] = useState(null);
+    const [editPhoneModelName, setEditPhoneModelName] = useState('');
+    const [editPhoneModelAspectRatio, setEditPhoneModelAspectRatio] = useState('');
+    const [editPhoneModelBorderRadius, setEditPhoneModelBorderRadius] = useState('');
+    const [editPhoneModelCameraTop, setEditPhoneModelCameraTop] = useState('');
+    const [editPhoneModelCameraRight, setEditPhoneModelCameraRight] = useState('');
+
+    const createPhoneModelMutation = useCreateAdminPhoneModel();
+    const updatePhoneModelMutation = useUpdateAdminPhoneModel();
+    const deletePhoneModelMutation = useDeleteAdminPhoneModel();
+
+    // Inventory management state
+    const [creatingInventory, setCreatingInventory] = useState(false);
+    const [newInventoryPhoneModelId, setNewInventoryPhoneModelId] = useState('');
+    const [newInventoryCaseTypeId, setNewInventoryCaseTypeId] = useState('');
+    const [newInventoryQuantity, setNewInventoryQuantity] = useState('');
+
+    // Edit inventory state
+    const [editingInventory, setEditingInventory] = useState(null);
+    const [editInventoryPhoneModelId, setEditInventoryPhoneModelId] = useState('');
+    const [editInventoryCaseTypeId, setEditInventoryCaseTypeId] = useState('');
+    const [editInventoryQuantity, setEditInventoryQuantity] = useState('');
+
+    const createInventoryMutation = useCreateAdminInventory();
+    const updateInventoryMutation = useUpdateAdminInventory();
+    const deleteInventoryMutation = useDeleteAdminInventory();
 
     useEffect(() => {
         const verifyAdmin = async () => {
@@ -89,6 +144,7 @@ const AdminDashboard = () => {
         { id: 'statistics', label: 'Thống kê', icon: BarChart2 },
         { id: 'users', label: 'Quản lý người dùng', icon: Users },
         { id: 'products', label: 'Quản lý sản phẩm', icon: Package },
+        { id: 'phonemodels', label: 'Quản lý dòng máy', icon: Layers },
         { id: 'inventory', label: 'Quản lý tồn kho', icon: Layers },
         { id: 'orders', label: 'Quản lý đơn hàng', icon: ShoppingCart },
     ];
@@ -324,33 +380,367 @@ const AdminDashboard = () => {
                     <div>
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-medium text-gray-900">Danh sách sản phẩm (Case Types)</h3>
-                            <button className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                            <button 
+                                onClick={() => setCreatingProduct(true)}
+                                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
                                 <Plus className="w-4 h-4 mr-2" /> Thêm mới
                             </button>
                         </div>
+
                         {isLoadingProducts ? (
                             <div className="text-center py-4">Đang tải...</div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {products?.map((product) => (
-                                    <div key={product.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col">
-                                        <div className="h-40 bg-gray-100 flex items-center justify-center">
-                                            {product.image_url ? (
-                                                <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
-                                            ) : (
-                                                <Package className="h-12 w-12 text-gray-400" />
-                                            )}
+                            <div>
+                                {/* Inline create form for products */}
+                                {creatingProduct && (
+                                    <div className="mb-6 bg-white p-4 rounded-md border">
+                                        <h4 className="text-sm font-medium text-gray-900 mb-3">Thêm sản phẩm mới</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <input
+                                                type="text"
+                                                value={newProductName}
+                                                onChange={e => setNewProductName(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Tên sản phẩm"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={newProductDescription}
+                                                onChange={e => setNewProductDescription(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Mô tả"
+                                            />
+                                            <input
+                                                type="number"
+                                                value={newProductPrice}
+                                                onChange={e => setNewProductPrice(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Giá"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={newProductImageUrl}
+                                                onChange={e => setNewProductImageUrl(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="URL hình ảnh"
+                                            />
                                         </div>
-                                        <div className="p-4 flex-1 flex flex-col">
-                                            <h4 className="text-lg font-semibold text-gray-900 mb-1">{product.name}</h4>
-                                            <p className="text-sm text-gray-500 mb-2 line-clamp-2">{product.description}</p>
-                                            <div className="mt-auto flex justify-between items-center">
-                                                <span className="text-red-600 font-bold">{product.price.toLocaleString()} ₫</span>
-                                                <button className="text-sm text-blue-600 hover:underline">Chi tiết</button>
-                                            </div>
+                                        <div className="mt-3 flex space-x-2">
+                                            <button
+                                                onClick={() => createProductMutation.mutate({ productData: { name: newProductName, description: newProductDescription, price: newProductPrice, imageUrl: newProductImageUrl } }, {
+                                                    onSuccess: () => {
+                                                        setNewProductName(''); setNewProductDescription(''); setNewProductPrice(''); setNewProductImageUrl(''); setCreatingProduct(false);
+                                                    }
+                                                })}
+                                                disabled={createProductMutation.isLoading}
+                                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
+                                            >
+                                                {createProductMutation.isLoading ? 'Đang tạo...' : 'Tạo'}
+                                            </button>
+                                            <button
+                                                onClick={() => setCreatingProduct(false)}
+                                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                            >
+                                                Hủy
+                                            </button>
                                         </div>
                                     </div>
-                                ))}
+                                )}
+
+                                {/* Inline edit form for products */}
+                                {editingProduct && (
+                                    <div className="mb-6 bg-white p-4 rounded-md border">
+                                        <h4 className="text-sm font-medium text-gray-900 mb-3">Chỉnh sửa sản phẩm (ID: {editingProduct._id})</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <input
+                                                type="text"
+                                                value={editProductName}
+                                                onChange={e => setEditProductName(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Tên sản phẩm"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={editProductDescription}
+                                                onChange={e => setEditProductDescription(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Mô tả"
+                                            />
+                                            <input
+                                                type="number"
+                                                value={editProductPrice}
+                                                onChange={e => setEditProductPrice(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Giá"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={editProductImageUrl}
+                                                onChange={e => setEditProductImageUrl(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="URL hình ảnh"
+                                            />
+                                        </div>
+                                        <div className="mt-3 flex space-x-2">
+                                            <button
+                                                onClick={() => updateProductMutation.mutate({ productId: editingProduct._id, productData: { name: editProductName, description: editProductDescription, price: editProductPrice, imageUrl: editProductImageUrl } })}
+                                                disabled={updateProductMutation.isLoading}
+                                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
+                                            >
+                                                {updateProductMutation.isLoading ? 'Đang lưu...' : 'Lưu'}
+                                            </button>
+                                            <button
+                                                onClick={() => setEditingProduct(null)}
+                                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                            >
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {products?.data?.map((product) => (
+                                        <div key={product._id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col">
+                                            <div className="h-40 bg-gray-100 flex items-center justify-center">
+                                                {product.imageUrl ? (
+                                                    <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
+                                                ) : (
+                                                    <Package className="h-12 w-12 text-gray-400" />
+                                                )}
+                                            </div>
+                                            <div className="p-4 flex-1 flex flex-col">
+                                                <h4 className="text-lg font-semibold text-gray-900 mb-1">{product.name}</h4>
+                                                <p className="text-sm text-gray-500 mb-2 line-clamp-2">{product.description}</p>
+                                                <div className="mt-auto">
+                                                    <div className="mb-2">
+                                                        <span className="text-red-600 font-bold">{product.price.toLocaleString()} ₫</span>
+                                                    </div>
+                                                    <div className="flex space-x-2">
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingProduct(product);
+                                                                setEditProductName(product.name || '');
+                                                                setEditProductDescription(product.description || '');
+                                                                setEditProductPrice(product.price || '');
+                                                                setEditProductImageUrl(product.imageUrl || '');
+                                                            }}
+                                                            className="text-sm text-blue-600 hover:underline"
+                                                        >
+                                                            Sửa
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                if (confirm(`Xóa sản phẩm ${product.name}?`)) {
+                                                                    deleteProductMutation.mutate(product._id);
+                                                                }
+                                                            }}
+                                                            disabled={deleteProductMutation.isLoading}
+                                                            className="text-sm text-red-600 hover:text-red-900"
+                                                        >
+                                                            Xóa
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            case 'phonemodels':
+                return (
+                    <div>
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-medium text-gray-900">Danh sách dòng máy</h3>
+                            <button 
+                                onClick={() => setCreatingPhoneModel(true)}
+                                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                                <Plus className="w-4 h-4 mr-2" /> Thêm mới
+                            </button>
+                        </div>
+
+                        {isLoadingPhoneModels ? (
+                            <div className="text-center py-4">Đang tải...</div>
+                        ) : (
+                            <div>
+                                {/* Inline create form for phone models */}
+                                {creatingPhoneModel && (
+                                    <div className="mb-6 bg-white p-4 rounded-md border">
+                                        <h4 className="text-sm font-medium text-gray-900 mb-3">Thêm dòng máy mới</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <input
+                                                type="text"
+                                                value={newPhoneModelName}
+                                                onChange={e => setNewPhoneModelName(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Tên dòng máy (vd: iPhone 14 Pro)"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={newPhoneModelAspectRatio}
+                                                onChange={e => setNewPhoneModelAspectRatio(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Aspect Ratio (vd: 9/18)"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={newPhoneModelBorderRadius}
+                                                onChange={e => setNewPhoneModelBorderRadius(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Border Radius (vd: 3rem)"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={newPhoneModelCameraTop}
+                                                onChange={e => setNewPhoneModelCameraTop(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Camera Top (vd: 1rem)"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={newPhoneModelCameraRight}
+                                                onChange={e => setNewPhoneModelCameraRight(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Camera Right (vd: 1rem)"
+                                            />
+                                        </div>
+                                        <div className="mt-3 flex space-x-2">
+                                            <button
+                                                onClick={() => createPhoneModelMutation.mutate({ phoneModelData: { name: newPhoneModelName, aspect_ratio: newPhoneModelAspectRatio, border_radius: newPhoneModelBorderRadius, camera_position: { top: newPhoneModelCameraTop, right: newPhoneModelCameraRight } } }, {
+                                                    onSuccess: () => {
+                                                        setNewPhoneModelName(''); setNewPhoneModelAspectRatio(''); setNewPhoneModelBorderRadius(''); setNewPhoneModelCameraTop(''); setNewPhoneModelCameraRight(''); setCreatingPhoneModel(false);
+                                                    }
+                                                })}
+                                                disabled={createPhoneModelMutation.isLoading}
+                                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
+                                            >
+                                                {createPhoneModelMutation.isLoading ? 'Đang tạo...' : 'Tạo'}
+                                            </button>
+                                            <button
+                                                onClick={() => setCreatingPhoneModel(false)}
+                                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                            >
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Inline edit form for phone models */}
+                                {editingPhoneModel && (
+                                    <div className="mb-6 bg-white p-4 rounded-md border">
+                                        <h4 className="text-sm font-medium text-gray-900 mb-3">Chỉnh sửa dòng máy (ID: {editingPhoneModel._id})</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <input
+                                                type="text"
+                                                value={editPhoneModelName}
+                                                onChange={e => setEditPhoneModelName(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Tên dòng máy"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={editPhoneModelAspectRatio}
+                                                onChange={e => setEditPhoneModelAspectRatio(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Aspect Ratio"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={editPhoneModelBorderRadius}
+                                                onChange={e => setEditPhoneModelBorderRadius(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Border Radius"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={editPhoneModelCameraTop}
+                                                onChange={e => setEditPhoneModelCameraTop(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Camera Top"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={editPhoneModelCameraRight}
+                                                onChange={e => setEditPhoneModelCameraRight(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Camera Right"
+                                            />
+                                        </div>
+                                        <div className="mt-3 flex space-x-2">
+                                            <button
+                                                onClick={() => updatePhoneModelMutation.mutate({ phoneModelId: editingPhoneModel._id, phoneModelData: { name: editPhoneModelName, aspect_ratio: editPhoneModelAspectRatio, border_radius: editPhoneModelBorderRadius, camera_position: { top: editPhoneModelCameraTop, right: editPhoneModelCameraRight } } })}
+                                                disabled={updatePhoneModelMutation.isLoading}
+                                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
+                                            >
+                                                {updatePhoneModelMutation.isLoading ? 'Đang lưu...' : 'Lưu'}
+                                            </button>
+                                            <button
+                                                onClick={() => setEditingPhoneModel(null)}
+                                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                            >
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aspect Ratio</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Border Radius</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Camera Position</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {phoneModels?.data?.map((model) => (
+                                                <tr key={model._id}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{model._id}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{model.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{model.aspect_ratio}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{model.border_radius}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        top: {model.camera_position?.top}, right: {model.camera_position?.right}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm space-x-3">
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingPhoneModel(model);
+                                                                setEditPhoneModelName(model.name || '');
+                                                                setEditPhoneModelAspectRatio(model.aspect_ratio || '');
+                                                                setEditPhoneModelBorderRadius(model.border_radius || '');
+                                                                setEditPhoneModelCameraTop(model.camera_position?.top || '');
+                                                                setEditPhoneModelCameraRight(model.camera_position?.right || '');
+                                                            }}
+                                                            className="text-blue-600 hover:text-blue-900"
+                                                        >
+                                                            Sửa
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                if (confirm(`Xóa dòng máy ${model.name}?`)) {
+                                                                    deletePhoneModelMutation.mutate(model._id);
+                                                                }
+                                                            }}
+                                                            disabled={deletePhoneModelMutation.isLoading}
+                                                            className="text-red-600 hover:text-red-900"
+                                                        >
+                                                            Xóa
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -360,37 +750,184 @@ const AdminDashboard = () => {
                     <div>
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-medium text-gray-900">Quản lý tồn kho</h3>
+                            <button 
+                                onClick={() => setCreatingInventory(true)}
+                                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                                <Plus className="w-4 h-4 mr-2" /> Thêm mới
+                            </button>
                         </div>
+
                         {isLoadingInventory ? (
                             <div className="text-center py-4">Đang tải...</div>
                         ) : (
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sản phẩm</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dòng máy</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số lượng</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {inventory?.map((item) => (
-                                            <tr key={item.id}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.id}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.case_type_name}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.phone_model_name}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{item.quantity}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.quantity > 50 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                                                        {item.quantity > 50 ? 'Còn hàng' : 'Sắp hết'}
-                                                    </span>
-                                                </td>
+                            <div>
+                                {/* Inline create form for inventory */}
+                                {creatingInventory && (
+                                    <div className="mb-6 bg-white p-4 rounded-md border">
+                                        <h4 className="text-sm font-medium text-gray-900 mb-3">Thêm tồn kho mới</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                            <select
+                                                value={newInventoryPhoneModelId}
+                                                onChange={e => setNewInventoryPhoneModelId(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                            >
+                                                <option value="">Chọn dòng máy</option>
+                                                {phoneModels?.data?.map((model) => (
+                                                    <option key={model._id} value={model._id}>
+                                                        {model.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select
+                                                value={newInventoryCaseTypeId}
+                                                onChange={e => setNewInventoryCaseTypeId(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                            >
+                                                <option value="">Chọn sản phẩm (Case)</option>
+                                                {products?.data?.map((product) => (
+                                                    <option key={product._id} value={product._id}>
+                                                        {product.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <input
+                                                type="number"
+                                                value={newInventoryQuantity}
+                                                onChange={e => setNewInventoryQuantity(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Số lượng"
+                                            />
+                                        </div>
+                                        <div className="mt-3 flex space-x-2">
+                                            <button
+                                                onClick={() => createInventoryMutation.mutate({ inventoryData: { phone_model_id: newInventoryPhoneModelId, case_type_id: newInventoryCaseTypeId, quantity: parseInt(newInventoryQuantity) } }, {
+                                                    onSuccess: () => {
+                                                        setNewInventoryPhoneModelId(''); setNewInventoryCaseTypeId(''); setNewInventoryQuantity(''); setCreatingInventory(false);
+                                                    }
+                                                })}
+                                                disabled={createInventoryMutation.isLoading}
+                                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
+                                            >
+                                                {createInventoryMutation.isLoading ? 'Đang tạo...' : 'Tạo'}
+                                            </button>
+                                            <button
+                                                onClick={() => setCreatingInventory(false)}
+                                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                            >
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Inline edit form for inventory */}
+                                {editingInventory && (
+                                    <div className="mb-6 bg-white p-4 rounded-md border">
+                                        <h4 className="text-sm font-medium text-gray-900 mb-3">Chỉnh sửa tồn kho (ID: {editingInventory._id})</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                            <select
+                                                value={editInventoryPhoneModelId}
+                                                onChange={e => setEditInventoryPhoneModelId(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                            >
+                                                <option value="">Chọn dòng máy</option>
+                                                {phoneModels?.data?.map((model) => (
+                                                    <option key={model._id} value={model._id}>
+                                                        {model.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select
+                                                value={editInventoryCaseTypeId}
+                                                onChange={e => setEditInventoryCaseTypeId(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                            >
+                                                <option value="">Chọn sản phẩm (Case)</option>
+                                                {products?.data?.map((product) => (
+                                                    <option key={product._id} value={product._id}>
+                                                        {product.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <input
+                                                type="number"
+                                                value={editInventoryQuantity}
+                                                onChange={e => setEditInventoryQuantity(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Số lượng"
+                                            />
+                                        </div>
+                                        <div className="mt-3 flex space-x-2">
+                                            <button
+                                                onClick={() => updateInventoryMutation.mutate({ inventoryId: editingInventory._id, inventoryData: { phone_model_id: editInventoryPhoneModelId, case_type_id: editInventoryCaseTypeId, quantity: parseInt(editInventoryQuantity) } })}
+                                                disabled={updateInventoryMutation.isLoading}
+                                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
+                                            >
+                                                {updateInventoryMutation.isLoading ? 'Đang lưu...' : 'Lưu'}
+                                            </button>
+                                            <button
+                                                onClick={() => setEditingInventory(null)}
+                                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                            >
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dòng máy</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sản phẩm</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số lượng</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {inventory?.data?.map((item) => (
+                                                <tr key={item._id}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.phone_model_id?.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.case_type_id?.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{item.quantity}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.quantity > 50 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                                            {item.quantity > 50 ? 'Còn hàng' : 'Sắp hết'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm space-x-3">
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingInventory(item);
+                                                                setEditInventoryPhoneModelId(item.phone_model_id?._id || '');
+                                                                setEditInventoryCaseTypeId(item.case_type_id?._id || '');
+                                                                setEditInventoryQuantity(item.quantity || '');
+                                                            }}
+                                                            className="text-blue-600 hover:text-blue-900"
+                                                        >
+                                                            Sửa
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                if (confirm(`Xóa tồn kho cho ${item.phone_model_id?.name} - ${item.case_type_id?.name}?`)) {
+                                                                    deleteInventoryMutation.mutate(item._id);
+                                                                }
+                                                            }}
+                                                            disabled={deleteInventoryMutation.isLoading}
+                                                            className="text-red-600 hover:text-red-900"
+                                                        >
+                                                            Xóa
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         )}
                     </div>

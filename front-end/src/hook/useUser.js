@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { login, register, adminLogin, getUserDetails, updateUser, updateAdminUser, createAdminUser, deleteAdminUser, getRoles } from '../api/userApi';
+import { login, register, adminLogin, getUserDetails, updateUser, updateAdminUser, createAdminUser, deleteAdminUser, getRoles, createAdminProduct, updateAdminProduct, deleteAdminProduct, getAdminPhoneModels, createAdminPhoneModel, updateAdminPhoneModel, deleteAdminPhoneModel, createAdminInventory, updateAdminInventory, deleteAdminInventory } from '../api/userApi';
 
 import { useAuth } from '../context/AuthContext';
 
@@ -93,5 +93,125 @@ export const useRoles = () => {
     queryKey: ['admin', 'roles'],
     queryFn: () => getRoles(auth?.token),
     enabled: !!auth?.token,
+  });
+};
+
+// Product Management Hooks
+export const useCreateAdminProduct = () => {
+  const { auth } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ productData }) => createAdminProduct(productData, auth?.token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
+    },
+  });
+};
+
+export const useUpdateAdminProduct = () => {
+  const { auth } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ productId, productData }) => updateAdminProduct(productId, productData, auth?.token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
+    },
+  });
+};
+
+export const useDeleteAdminProduct = () => {
+  const { auth } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (productId) => deleteAdminProduct(productId, auth?.token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
+    },
+  });
+};
+
+// Phone Model Management Hooks
+export const useAdminPhoneModels = () => {
+  const { auth } = useAuth();
+  return useQuery({
+    queryKey: ['admin', 'phonemodels'],
+    queryFn: () => getAdminPhoneModels(auth?.token),
+    enabled: !!auth?.token,
+  });
+};
+
+export const useCreateAdminPhoneModel = () => {
+  const { auth } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ phoneModelData }) => createAdminPhoneModel(phoneModelData, auth?.token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'phonemodels'] });
+    },
+  });
+};
+
+export const useUpdateAdminPhoneModel = () => {
+  const { auth } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ phoneModelId, phoneModelData }) => updateAdminPhoneModel(phoneModelId, phoneModelData, auth?.token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'phonemodels'] });
+    },
+  });
+};
+
+export const useDeleteAdminPhoneModel = () => {
+  const { auth } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (phoneModelId) => deleteAdminPhoneModel(phoneModelId, auth?.token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'phonemodels'] });
+    },
+  });
+};
+
+// Inventory Management Hooks
+export const useCreateAdminInventory = () => {
+  const { auth } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ inventoryData }) => createAdminInventory(inventoryData, auth?.token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'inventory'] });
+    },
+  });
+};
+
+export const useUpdateAdminInventory = () => {
+  const { auth } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ inventoryId, inventoryData }) => updateAdminInventory(inventoryId, inventoryData, auth?.token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'inventory'] });
+    },
+  });
+};
+
+export const useDeleteAdminInventory = () => {
+  const { auth } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (inventoryId) => deleteAdminInventory(inventoryId, auth?.token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'inventory'] });
+    },
   });
 };

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAdminUsers, getAdminProducts, getAdminInventory } from '../api/userApi';
+import { getAdminUsers, getAdminProducts, getAdminInventory, getAdminPhoneModels } from '../api/userApi';
 import { useAuth } from '../context/AuthContext';
 
 export const useAdminUsers = () => {
@@ -25,6 +25,15 @@ export const useAdminInventory = () => {
     return useQuery({
         queryKey: ['admin', 'inventory'],
         queryFn: () => getAdminInventory(auth?.token),
+        enabled: !!auth?.token,
+    });
+};
+
+export const useAdminPhoneModels = () => {
+    const { auth } = useAuth();
+    return useQuery({
+        queryKey: ['admin', 'phonemodels'],
+        queryFn: () => getAdminPhoneModels(auth?.token),
         enabled: !!auth?.token,
     });
 };

@@ -84,7 +84,7 @@ export const getAdminUsers = async (token) => {
 };
 
 export const getAdminProducts = async (token) => {
-  const response = await axios.get('/api/admin/products', {
+  const response = await axios.get('http://localhost:8082/casetype', {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -93,7 +93,7 @@ export const getAdminProducts = async (token) => {
 };
 
 export const getAdminInventory = async (token) => {
-  const response = await axios.get('/api/admin/inventory', {
+  const response = await axios.get('http://localhost:8082/inventory', {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -106,6 +106,99 @@ export const getRoles = async (token) => {
     headers: {
       Authorization: `Bearer ${token}`
     }
+  });
+  return response.data;
+};
+
+// Product (CaseType) Management
+export const createAdminProduct = async (productData, token) => {
+  const response = await axios.post(`http://localhost:8082/admin/casetype`, productData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const updateAdminProduct = async (productId, productData, token) => {
+  const response = await axios.put(`http://localhost:8082/admin/casetype/${productId}`, productData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const deleteAdminProduct = async (productId, token) => {
+  const response = await axios.delete(`http://localhost:8082/admin/casetype/${productId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+// Phone Model Management
+export const getAdminPhoneModels = async (token) => {
+  const response = await axios.get('http://localhost:8082/phonemodel', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
+};
+
+export const createAdminPhoneModel = async (phoneModelData, token) => {
+  const response = await axios.post(`http://localhost:8082/admin/phonemodel`, phoneModelData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const updateAdminPhoneModel = async (phoneModelId, phoneModelData, token) => {
+  const response = await axios.put(`http://localhost:8082/admin/phonemodel/${phoneModelId}`, phoneModelData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const deleteAdminPhoneModel = async (phoneModelId, token) => {
+  const response = await axios.delete(`http://localhost:8082/admin/phonemodel/${phoneModelId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+// Inventory Management - CRUD functions
+export const createAdminInventory = async (inventoryData, token) => {
+  const response = await axios.post(`http://localhost:8082/admin/inventory`, inventoryData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const updateAdminInventory = async (inventoryId, inventoryData, token) => {
+  const response = await axios.put(`http://localhost:8082/admin/inventory/${inventoryId}`, inventoryData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const deleteAdminInventory = async (inventoryId, token) => {
+  const response = await axios.delete(`http://localhost:8082/admin/inventory/${inventoryId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   return response.data;
 };

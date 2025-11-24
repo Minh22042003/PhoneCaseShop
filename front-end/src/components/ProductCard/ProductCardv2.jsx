@@ -24,8 +24,8 @@ const ProductCardv2 = ({ product }) => {
             {/* Vùng Ảnh Sản Phẩm */}
             <div className="relative overflow-hidden w-full aspect-square">
                 <img
-                    src={product.case_type_image_url}
-                    alt={product.case_type_name}
+                    src={product.imageUrl}
+                    alt={product.name}
                     className="w-full h-full object-cover transition duration-500 ease-in-out hover:opacity-90"
                     onError={handleImageError}
                     loading="lazy"
@@ -37,17 +37,17 @@ const ProductCardv2 = ({ product }) => {
                 <div>
                     {/* Tên Sản Phẩm */}
                     <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 leading-tight line-clamp-2">
-                        {product.case_type_name}
+                        {product.name}
                     </h3>
 
                     {/* Giá Tiền */}
                     <p className="text-2xl font-extrabold text-indigo-600 mb-3">
-                        {formatPrice(product.case_type_price)}
+                        {formatPrice(product.price)}
                     </p>
 
                     {/* Mô tả ngắn */}
                     <p className="text-sm text-gray-500 mb-4 line-clamp-3">
-                        {product.case_type_description}
+                        {product.description}
                     </p>
                 </div>
 

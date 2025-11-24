@@ -17,8 +17,8 @@ const Home = () => {
         content = (
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto py-12 sm:py-16">
-                {productData.map((product) => (
-                    <ProductCardv2 key={product.id} product={product} />
+                {productData.data.map((product) => (
+                    <ProductCardv2 key={product._id} product={product} />
                 ))}
             </div>
         );

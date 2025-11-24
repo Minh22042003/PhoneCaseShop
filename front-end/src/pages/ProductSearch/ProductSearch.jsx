@@ -5,6 +5,10 @@ import ProductCardv2 from "../../components/ProductCard/ProductCardv2";
 
 export default function ProductSearch() {
   const { data: productData, isLoading, isError, error } = useProduct();
+  
+  const products = useMemo(() => {
+    return productData?.data || [];
+  }, [productData]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedModel, setSelectedModel] = useState("all");
@@ -20,12 +24,9 @@ export default function ProductSearch() {
     setCurrentPage(1);
   }, [searchTerm, selectedModel, priceRange, minPrice, maxPrice, sortOrder]);
 
-  // ⭐ Luôn tạo products, tránh undefined
-  const products = productData || [];
-
   const phoneModels = useMemo(() => {
     const models = new Set();
-    products.forEach((p) => models.add(p.phone_model_name));
+    products.forEach((p) => models.add(p.name));
     return ["all", ...models];
   }, [products]);
 
@@ -34,29 +35,29 @@ export default function ProductSearch() {
       .filter((p) => {
         if (
           searchTerm.trim() !== "" &&
-          !p.case_type_name.toLowerCase().includes(searchTerm.toLowerCase())
+          !p.name.toLowerCase().includes(searchTerm.toLowerCase())
         ) {
           return false;
         }
 
-        if (selectedModel !== "all" && p.phone_model_name !== selectedModel) {
+        if (selectedModel !== "all" && p.name !== selectedModel) {
           return false;
         }
 
         if (priceRange !== "all") {
-          if (priceRange === "under300" && p.case_type_price > 300000) return false;
-          if (priceRange === "300to500" && (p.case_type_price < 300000 || p.case_type_price > 500000)) return false;
-          if (priceRange === "above500" && p.case_type_price < 500000) return false;
+          if (priceRange === "under300" && p.price > 300000) return false;
+          if (priceRange === "300to500" && (p.price < 300000 || p.price > 500000)) return false;
+          if (priceRange === "above500" && p.price < 500000) return false;
         }
 
-        if (minPrice !== "" && p.case_type_price < Number(minPrice)) return false;
-        if (maxPrice !== "" && p.case_type_price > Number(maxPrice)) return false;
+        if (minPrice !== "" && p.price < Number(minPrice)) return false;
+        if (maxPrice !== "" && p.price > Number(maxPrice)) return false;
 
         return true;
       })
       .sort((a, b) => {
-        if (sortOrder === "asc") return a.case_type_price - b.case_type_price;
-        if (sortOrder === "desc") return b.case_type_price - a.case_type_price;
+        if (sortOrder === "asc") return a.price - b.price;
+        if (sortOrder === "desc") return b.price - a.price;
         return 0;
       });
   }, [products, searchTerm, selectedModel, priceRange, minPrice, maxPrice, sortOrder]);
@@ -107,7 +108,7 @@ export default function ProductSearch() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {currentProducts.map((product) => (
-                <ProductCardv2 key={product.id} product={product} />
+                <ProductCardv2 key={product._id} product={product} />
               ))}
             </div>
 
