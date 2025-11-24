@@ -44,6 +44,36 @@ export const updateUser = async (userId, userData, token) => {
   return response.data;
 };
 
+// Admin-specific: update a user by id (admin sends token + target user id)
+export const updateAdminUser = async (userId, userData, token) => {
+  const response = await axios.put(`http://localhost:8081/admin/users/${userId}`, userData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+// Admin-specific: create a new user
+export const createAdminUser = async (userData, token) => {
+  const response = await axios.post(`http://localhost:8081/admin/users`, userData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+// Admin-specific: delete a user by id
+export const deleteAdminUser = async (userId, token) => {
+  const response = await axios.delete(`http://localhost:8081/admin/users/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
 export const getAdminUsers = async (token) => {
   const response = await axios.get('http://localhost:8081/admin/users', {
     headers: {
@@ -64,6 +94,15 @@ export const getAdminProducts = async (token) => {
 
 export const getAdminInventory = async (token) => {
   const response = await axios.get('/api/admin/inventory', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
+};
+
+export const getRoles = async (token) => {
+  const response = await axios.get('http://localhost:8081/admin/roles', {
     headers: {
       Authorization: `Bearer ${token}`
     }

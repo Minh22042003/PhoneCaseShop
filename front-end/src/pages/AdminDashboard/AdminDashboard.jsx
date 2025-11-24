@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { checkAdminAuth } from '../../api/userApi';
 import { useAdminUsers, useAdminProducts, useAdminInventory } from '../../hook/useAdmin';
+import { useUpdateAdminUser, useCreateAdminUser, useDeleteAdminUser, useRoles } from '../../hook/useUser';
 import {
     Users,
     BarChart2,
@@ -27,6 +28,28 @@ const AdminDashboard = () => {
     const { data: users, isLoading: isLoadingUsers } = useAdminUsers();
     const { data: products, isLoading: isLoadingProducts } = useAdminProducts();
     const { data: inventory, isLoading: isLoadingInventory } = useAdminInventory();//
+
+    // useUpdateAdminUser hook handles invalidation internally
+
+    // Create user state
+    const [creatingUser, setCreatingUser] = useState(false);
+    const [newName, setNewName] = useState('');
+    const [newEmail, setNewEmail] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [newPhone, setNewPhone] = useState('');
+    const [newRoleId, setNewRoleId] = useState('');
+
+    // Edit user state - now includes role_id
+    const [editingUser, setEditingUser] = useState(null);
+    const [editName, setEditName] = useState('');
+    const [editEmail, setEditEmail] = useState('');
+    const [editPhone, setEditPhone] = useState('');
+    const [editRoleId, setEditRoleId] = useState('');
+
+    const updateMutation = useUpdateAdminUser();
+    const createMutation = useCreateAdminUser();
+    const deleteMutation = useDeleteAdminUser();
+    const { data: rolesData } = useRoles();
 
     useEffect(() => {
         const verifyAdmin = async () => {
@@ -97,41 +120,201 @@ const AdminDashboard = () => {
                     <div>
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-medium text-gray-900">Danh sách người dùng</h3>
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder="Tìm kiếm..."
-                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                                />
-                                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                            <div className="flex items-center space-x-3">
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        placeholder="Tìm kiếm..."
+                                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    />
+                                    <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                                </div>
+                                <button
+                                    onClick={() => setCreatingUser(true)}
+                                    className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                                >
+                                    <Plus className="w-4 h-4 mr-2" /> Thêm mới
+                                </button>
                             </div>
                         </div>
+
                         {isLoadingUsers ? (
                             <div className="text-center py-4">Đang tải...</div>
                         ) : (
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SĐT</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {users?.data?.map((user) => (
-                                            <tr key={user.id}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.id}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.phone}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-900 cursor-pointer">Sửa</td>
+                            <div>
+                                {/* Inline create form shown when creatingUser is set */}
+                                {creatingUser && (
+                                    <div className="mb-4 bg-white p-4 rounded-md border">
+                                        <h4 className="text-sm font-medium text-gray-900 mb-2">Thêm người dùng mới</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                            <input
+                                                type="text"
+                                                value={newName}
+                                                onChange={e => setNewName(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Tên"
+                                            />
+                                            <input
+                                                type="email"
+                                                value={newEmail}
+                                                onChange={e => setNewEmail(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Email"
+                                            />
+                                            <input
+                                                type="password"
+                                                value={newPassword}
+                                                onChange={e => setNewPassword(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Mật khẩu"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={newPhone}
+                                                onChange={e => setNewPhone(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="SĐT"
+                                            />
+                                            <select
+                                                value={newRoleId}
+                                                onChange={e => setNewRoleId(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                            >
+                                                <option value="">Chọn vai trò</option>
+                                                {rolesData?.data?.map((role) => (
+                                                    <option key={role._id} value={role._id}>
+                                                        {role.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="mt-3 flex space-x-2">
+                                            <button
+                                                onClick={() => createMutation.mutate({ userData: { name: newName, email: newEmail, password: newPassword, phone: newPhone, role_id: newRoleId } }, {
+                                                    onSuccess: () => {
+                                                        setNewName(''); setNewEmail(''); setNewPassword(''); setNewPhone(''); setNewRoleId(''); setCreatingUser(false);
+                                                    }
+                                                })}
+                                                disabled={createMutation.isLoading}
+                                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
+                                            >
+                                                {createMutation.isLoading ? 'Đang tạo...' : 'Tạo'}
+                                            </button>
+                                            <button
+                                                onClick={() => setCreatingUser(false)}
+                                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                            >
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Inline edit form shown when editingUser is set */}
+                                {editingUser && (
+                                    <div className="mb-4 bg-white p-4 rounded-md border">
+                                        <h4 className="text-sm font-medium text-gray-900 mb-2">Chỉnh sửa người dùng (ID: {editingUser._id})</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                            <input
+                                                type="text"
+                                                value={editName}
+                                                onChange={e => setEditName(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Tên"
+                                            />
+                                            <input
+                                                type="email"
+                                                value={editEmail}
+                                                onChange={e => setEditEmail(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="Email"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={editPhone}
+                                                onChange={e => setEditPhone(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                                placeholder="SĐT"
+                                            />
+                                            <select
+                                                value={editRoleId}
+                                                onChange={e => setEditRoleId(e.target.value)}
+                                                className="px-3 py-2 border rounded"
+                                            >
+                                                <option value="">Chọn vai trò</option>
+                                                {rolesData?.data?.map((role) => (
+                                                    <option key={role._id} value={role._id}>
+                                                        {role.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="mt-3 flex space-x-2">
+                                            <button
+                                                onClick={() => updateMutation.mutate({ userId: editingUser._id, userData: { name: editName, email: editEmail, phone: editPhone, role_id: editRoleId } })}
+                                                disabled={updateMutation.isLoading}
+                                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
+                                            >
+                                                {updateMutation.isLoading ? 'Đang lưu...' : 'Lưu'}
+                                            </button>
+                                            <button
+                                                onClick={() => setEditingUser(null)}
+                                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                            >
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SĐT</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {users?.data?.map((user) => (
+                                                <tr key={user.id}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user._id}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.phone}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm space-x-3">
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingUser(user);
+                                                                setEditName(user.name || '');
+                                                                setEditEmail(user.email || '');
+                                                                setEditPhone(user.phone || '');
+                                                                setEditRoleId(user.role_id || '');
+                                                            }}
+                                                            className="text-blue-600 hover:text-blue-900"
+                                                        >
+                                                            Sửa
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                if (confirm(`Xóa người dùng ${user.name || user.email}?`)) {
+                                                                    deleteMutation.mutate(user._id);
+                                                                }
+                                                            }}
+                                                            disabled={deleteMutation.isLoading}
+                                                            className="text-red-600 hover:text-red-900"
+                                                        >
+                                                            Xóa
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         )}
                     </div>
